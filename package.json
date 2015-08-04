@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
-    "bower-copy": "./bin/bower-copy.js"
+    "assets": "bin/assets.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
