@@ -2,7 +2,9 @@
   "name": "@dotnetcarpenter/firefund-cli",
   "version": "1.0.0",
   "description": "Command Line Interface (CLI) for Firefund development scripts",
-  "bin" : { "bower-copy" : "./bin/bower-copy.js" },
+  "bin": {
+    "bower-copy": "./bin/bower-copy.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/Firefund/firefund-cli/issues"
   },
-  "homepage": "https://github.com/Firefund/firefund-cli#readme"
+  "homepage": "https://github.com/Firefund/firefund-cli#readme",
+  "dependencies": {
+    "bower-copy": "^0.1.0",
+    "shelljs": "^0.5.1"
+  }
 }
