@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+"use strict";
+
+var c = require("../lib/common.js")
 var path = require("path");
 var shell = require("shelljs")
 var args = process.argv.slice(2)
@@ -8,7 +11,7 @@ var copyPath
 
 //shell.exec("echo " + args.toString())
 if(!args[0]) {
-  errorOut("Destination path for asssets is required!")
+  c.error("Destination path for asssets is required!")
 }
 copyPath = path.resolve(process.cwd(), args[0]);
 
@@ -16,15 +19,10 @@ copyPath = path.resolve(process.cwd(), args[0]);
 if(shell.which("bower")) {
   shell.exec("bower install")
 } else {
-  errorOut("You need to install bower to download the asssets.\r\nnpm install -g bower")
+  c.error("You need to install bower to download the asssets.\r\nnpm install -g bower")
 }
 
 // copy assets from bower_components to supplied copyPath
 copy({ dest: copyPath }, function(err, copied) {
-  if(err) errorOut(err)
+  if(err) c.error(err)
 })
-
-function errorOut(msg) {
-  console.error(msg)
-  process.exit(1);
-}
