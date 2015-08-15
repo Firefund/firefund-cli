@@ -3,7 +3,7 @@
 "use strict";
 
 var c = require("../lib/common.js")
-  , path = require("path");
+  , path = require("path")
   , shell = require("shelljs")
   , args = process.argv.slice(2)
   , ecstatic = require("ecstatic")
@@ -18,12 +18,12 @@ if(!args[0]) {
 }
 
 http.createServer(
-  ecstatic({ root: dirroot + "/frontend/" })
+  ecstatic({ root: path.resolve(dirroot, args[0]) })
 ).listen(8080);
 
-server.watch(dirroot + args[0]);
+server.watch(path.resolve(dirroot, args[0]));
 
 console.log(
-  "Running server on port localhost:8080 and watching changes in "
-  + dirroot + args[0]
+  "Running server on port localhost:8080 with root in and watching changes in "
+  + path.resolve(dirroot, args[0])
 )
