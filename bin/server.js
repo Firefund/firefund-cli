@@ -4,11 +4,9 @@
 
 var c = require("../lib/common.js")
   , path = require("path")
-  , shell = require("shelljs")
   , args = process.argv.slice(2)
   , ecstatic = require("ecstatic")
   , livereload = require("livereload")
-  , path = require("path")
   , http = require("http")
   , dirroot = path.normalize(process.cwd())
   , server = livereload.createServer()
