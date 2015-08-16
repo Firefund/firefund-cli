@@ -3,7 +3,6 @@
 "use strict";
 
 var c = require("../lib/common.js")
-console.dir(c)
 var dest = c.fst(c.args) // null or first argument to assets
 var path = require("path");
 var shell = require("shelljs")

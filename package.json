@@ -23,6 +23,7 @@
     "bower-copy": "^0.1.0",
     "ecstatic": "^0.8.0",
     "livereload": "^0.3.7",
+    "postcss-cli": "^1.5.0",
     "shelljs": "^0.5.1"
   }
 }
