@@ -4,7 +4,8 @@
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
     "assets": "bin/assets.js",
-    "server": "bin/server.js"
+    "server": "bin/server.js",
+    "css":    "bin/css.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,12 +19,13 @@
   "bugs": {
     "url": "https://github.com/Firefund/firefund-cli/issues"
   },
-  "homepage": "https://github.com/Firefund/firefund-cli#readme",
+  "homepage": "https://www.npmjs.com/package/@dotnetcarpenter/firefund-cli#readme",
   "dependencies": {
     "bower-copy": "^0.1.0",
     "ecstatic": "^0.8.0",
     "livereload": "^0.3.7",
     "postcss-cli": "^1.5.0",
-    "shelljs": "^0.5.1"
+    "shelljs": "^0.5.1",
+    "yargs": "^3.17.1"
   }
 }
