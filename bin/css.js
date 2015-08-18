@@ -3,13 +3,8 @@
 "use strict";
 
 var c = require("../lib/common.js")
-  , test = c.args
+  , args = c.args
+  , shell = require("shelljs")
 
-var useLibs = [];
-
-c.forEach(test, function(n, i, all) {
-  if(n === "-u" && all[i + 1])
-    useLibs.push(all[i + 1])
-})
-
-console.log(useLibs)
+// direct arguments/paramenters to postcss + adding some default plugins
+shell.exec("postcss -u autoprefixer -u lost -u cssnext" + args.join(" "))
