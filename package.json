@@ -5,7 +5,8 @@
   "bin": {
     "assets": "bin/assets.js",
     "server": "bin/server.js",
-    "css":    "bin/css.js"
+    "css": "bin/css.js",
+    "postcss": "./node_modules/.bin/postcss"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,11 +22,13 @@
   },
   "homepage": "https://www.npmjs.com/package/@dotnetcarpenter/firefund-cli#readme",
   "dependencies": {
+    "autoprefixer": "^5.2.0",
     "bower-copy": "^0.1.0",
+    "cssnext": "^1.8.3",
     "ecstatic": "^0.8.0",
     "livereload": "^0.3.7",
+    "lost": "^6.5.0",
     "postcss-cli": "^1.5.0",
-    "shelljs": "^0.5.1",
-    "yargs": "^3.17.1"
+    "shelljs": "^0.5.1"
   }
 }
