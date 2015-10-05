@@ -10,6 +10,7 @@ var c = require("../lib/common.js")
   , http = require("http")
   , dirroot = path.normalize(process.cwd())
   , server = livereload.createServer()
+  , workingDir = path.resolve(dirroot, watchPath)
 
 if(!watchPath) {
   c.error("Watch path for livereload is required!")
@@ -23,5 +24,5 @@ server.watch(path.resolve(dirroot, watchPath));
 
 console.log(
   "Running server on port http://localhost:8080 with root in %s and listening for changes in %s",
-  path.resolve(dirroot, watchPath)
+  workingDir, workingDir
 )
