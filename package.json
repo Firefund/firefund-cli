@@ -21,11 +21,11 @@
   },
   "homepage": "https://www.npmjs.com/package/@dotnetcarpenter/firefund-cli#readme",
   "dependencies": {
-    "bower-copy": "^0.1.0",
-    "ecstatic": "^0.8.0",
-    "livereload": "^0.3.7",
-    "postcss-cli": "^1.5.0",
-    "shelljs": "^0.5.1",
-    "yargs": "^3.26.0"
+    "bower-copy": "latest",
+    "ecstatic": "latest",
+    "livereload": "latest",
+    "postcss-cli": "latest",
+    "shelljs": "latest",
+    "yargs": "latest"
   }
 }

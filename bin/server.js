@@ -23,5 +23,6 @@ server.watch(path.resolve(dirroot, watchPath));
 
 console.log(
   "Running server on port http://localhost:8080 with root in %s and listening for changes in %s",
+  path.resolve(dirroot, watchPath),
   path.resolve(dirroot, watchPath)
 )
