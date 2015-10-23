@@ -29,6 +29,6 @@
     "lost": "latest",
     "postcss-cli": "latest",
     "postcss-cssnext": "latest",
-    "shelljs": "latest",
+    "shelljs": "latest"
   }
 }
