@@ -17,7 +17,10 @@ if(!watchPath) {
 }
 
 http.createServer(
-  ecstatic({ root: path.resolve(dirroot, watchPath) })
+  ecstatic({
+    root: path.resolve(dirroot, watchPath),
+    defaultExt: "htm"
+  })
 ).listen(8080);
 
 server.watch(path.resolve(dirroot, watchPath));
