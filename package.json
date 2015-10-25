@@ -10,7 +10,7 @@
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
-    "test": "tap test.es5/*.js",
+    "test": "tap --coverage test.es5/*.js",
     "publish": "npm run transpile:bin",
     "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
     "transpile:test": "babel --out-dir test.es5 test",
