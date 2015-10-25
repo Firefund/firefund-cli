@@ -24,4 +24,4 @@ tap.test("Composed functions", function (t) {
   listeners({
     url: "fake"
   })
-});
+})
