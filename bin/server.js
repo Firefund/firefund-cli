@@ -2,6 +2,10 @@
 
 "use strict";
 
+/* *******************************************************************
+ * REMEMBER ONLY REQUIRE ES5 CODE AS NODE STILL DOES NOT SUPPORT ES6 *
+ ******************************************************************* */
+
 var c = require("../lib.es5/common")
   , watchPath = c.fst(c.args) // null or first argument to server
   , path = require("path")
