@@ -3,14 +3,19 @@
   "version": "0.2.2",
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
-    "assets": "bin/assets.js",
-    "server": "bin/server.es5.js",
-    "css": "bin/css.js",
+    "assets": "bin.es5/assets.js",
+    "server": "bin.es5/server.es5.js",
+    "css": "bin.es5/css.js",
     "postcss": "./node_modules/.bin/postcss"
   },
   "scripts": {
+    "pretest": "npm run --silent transpile",
+    "test": "tap test.es5/*.js",
     "publish": "babel bin/server.js > bin/server.es5.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
+    "transpile:test": "babel --out-dir test.es5 test",
+    "transpile:lib": "babel --out-dir lib.es5 lib",
+    "transpile:bin": "babel --out-dir bin.es5 bin"
   },
   "repository": {
     "type": "git",
@@ -34,6 +39,7 @@
     "shelljs": "latest"
   },
   "devDependencies": {
-    "babel": "latest"
+    "babel": "latest",
+    "tap": "latest"
   }
 }
