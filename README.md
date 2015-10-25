@@ -1,4 +1,4 @@
-# firefund-cli
+# firefund-cli ![dependencies status](https://david-dm.org/Firefund/firefund-cli.svg)
 Command Line Interface (CLI) for Firefund development scripts
 
 List of commands:

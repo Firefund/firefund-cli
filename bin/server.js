@@ -16,14 +16,30 @@ if(!watchPath) {
   c.error("Watch path for livereload is required!")
 }
 
-http.createServer(
-  ecstatic({
+let listeners = composeListeners(logPath, setupEcstatic())
+http.createServer(listeners).listen(8080);
+
+server.watch(path.resolve(dirroot, watchPath));
+
+function composeListeners(...requestListener) {
+  let listeners = []
+  listeners.push(...requestListener)
+  return function listen(request, response) {
+    for(let i = 0, len = listeners.length; i < len; i++)
+      listeners[i](request, response)
+  }
+}
+
+function logPath(request, response) {
+  console.log(request.url)
+}
+
+function setupEcstatic() {
+  return ecstatic({
     root: path.resolve(dirroot, watchPath),
     defaultExt: "htm"
   })
-).listen(8080);
-
-server.watch(path.resolve(dirroot, watchPath));
+}
 
 console.log(
   "Running server on port http://localhost:8080 with root in %s and listening for changes in %s",

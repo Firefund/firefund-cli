@@ -4,11 +4,12 @@
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
     "assets": "bin/assets.js",
-    "server": "bin/server.js",
+    "server": "bin/server.es5.js",
     "css": "bin/css.js",
     "postcss": "./node_modules/.bin/postcss"
   },
   "scripts": {
+    "publish": "babel bin/server.js > bin/server.es5.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,6 +22,7 @@
     "url": "https://github.com/Firefund/firefund-cli/issues"
   },
   "homepage": "https://www.npmjs.com/package/@dotnetcarpenter/firefund-cli#readme",
+  "#dependencies": "TODO: change latest to contemporary versions when we are close to shipping first real version",
   "dependencies": {
     "autoprefixer": "latest",
     "bower-copy": "latest",
@@ -30,5 +32,8 @@
     "postcss-cli": "latest",
     "postcss-cssnext": "latest",
     "shelljs": "latest"
+  },
+  "devDependencies": {
+    "babel": "latest"
   }
 }
