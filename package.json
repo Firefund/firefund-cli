@@ -4,14 +4,14 @@
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
     "assets": "bin.es5/assets.js",
-    "server": "bin.es5/server.es5.js",
+    "server": "bin.es5/server.js",
     "css": "bin.es5/css.js",
     "postcss": "./node_modules/.bin/postcss"
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
     "test": "tap test.es5/*.js",
-    "publish": "babel bin/server.js > bin/server.es5.js",
+    "publish": "npm run transpile:bin",
     "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
     "transpile:test": "babel --out-dir test.es5 test",
     "transpile:lib": "babel --out-dir lib.es5 lib",

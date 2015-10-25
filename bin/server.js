@@ -2,7 +2,7 @@
 
 "use strict";
 
-var c = require("../lib/common.js")
+var c = require("../lib.es5/common")
   , watchPath = c.fst(c.args) // null or first argument to server
   , path = require("path")
   , ecstatic = require("ecstatic")
@@ -11,6 +11,7 @@ var c = require("../lib/common.js")
   , dirroot = path.normalize(process.cwd())
   , server = livereload.createServer()
   , workingDir = path.resolve(dirroot, watchPath)
+  , composeListeners = require("../lib.es5/composer")
 
 if(!watchPath) {
   c.error("Watch path for livereload is required!")
@@ -20,15 +21,6 @@ let listeners = composeListeners(logPath, setupEcstatic())
 http.createServer(listeners).listen(8080);
 
 server.watch(path.resolve(dirroot, watchPath));
-
-function composeListeners(...requestListener) {
-  let listeners = []
-  listeners.push(...requestListener)
-  return function listen(request, response) {
-    for(let i = 0, len = listeners.length; i < len; i++)
-      listeners[i](request, response)
-  }
-}
 
 function logPath(request, response) {
   console.log(request.url)
