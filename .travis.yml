@@ -1,7 +1,11 @@
+# travis
 language: node_js
 node_js:
   - "stable"
   - "4.2"
+
+# codecov
+sudo: true
 before_install:
   - pip install codecov
 after_success:
