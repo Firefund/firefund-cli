@@ -40,6 +40,6 @@
   },
   "devDependencies": {
     "babel": "latest",
-    "tap": "latest"
+    "tap": "git://github.com/dotnetCarpenter/node-tap.git#pipecover-notest"
   }
 }
