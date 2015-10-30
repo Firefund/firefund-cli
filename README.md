@@ -1,3 +1,4 @@
+Testing waffle [![Stories in Ready](https://badge.waffle.io/Firefund/firefund-cli.png?label=ready&title=Ready)](https://waffle.io/Firefund/firefund-cli)
 # firefund-cli
 [![Build Status](https://travis-ci.org/Firefund/firefund-cli.svg?branch=master)](https://travis-ci.org/Firefund/firefund-cli)
 [![Coverage Status](https://coveralls.io/repos/Firefund/firefund-cli/badge.svg?branch=master&service=github)](https://coveralls.io/github/Firefund/firefund-cli?branch=master)
