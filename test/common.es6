@@ -68,20 +68,17 @@ tap.test("common.getParameters()", function (t) {
 tap.test("common.errorOut()", function(t) {
   var actual, expected
   const env = process.env,
-        args = ["test/test/common.errorOut"],
+        args = ["test/test/common.errorOut.es6"],
         node = process.execPath
   const child = spawn(node, args, {
     env,
     stdio: ['ignore', 'ignore', 'pipe']
   })
-  //let errData = ""
 
   t.plan(2)
 
   child.stderr.setEncoding("utf8")
-  /*child.stderr.on('data', data => {
-    errData += data
-  })*/
+
   child.on('exit', code => {
     t.ok(code === 1, "should exit with error code 1")
     t.equal(eol.lf(child.stderr.read()), "message\n")
