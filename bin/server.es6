@@ -6,7 +6,7 @@
  * REMEMBER ONLY REQUIRE ES5 CODE AS NODE STILL DOES NOT SUPPORT ES6 *
  ******************************************************************* */
 
-var c = require("../lib.es5/common")
+var c = require("../lib/common")
   , watchPath = c.fst(c.args) // null or first argument to server
   , path = require("path")
   , ecstatic = require("ecstatic")
@@ -15,7 +15,7 @@ var c = require("../lib.es5/common")
   , dirroot = path.normalize(process.cwd())
   , server = livereload.createServer()
   , workingDir = path.resolve(dirroot, watchPath)
-  , composeListeners = require("../lib.es5/composer")
+  , composeListeners = require("../lib/composer")
 
 if(!watchPath) {
   c.error("Watch path for livereload is required!")

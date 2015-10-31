@@ -12,7 +12,7 @@ function getParameters(get, parameters) {
 }
 
 module.exports = {
-  error: errorOut
+  errorOut
 , args: process.argv.slice(2).length > 0 ?
         process.argv.slice(2) : [null]
 , fst: function(arr) { return arr.length > 0 ? arr[0] : null }

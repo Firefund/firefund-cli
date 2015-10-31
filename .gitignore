@@ -17,4 +17,4 @@ coverage
 node_modules
 
 # EcmaScript 5 files
-*es5*
+*.js

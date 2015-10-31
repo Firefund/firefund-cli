@@ -10,12 +10,12 @@
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
-    "test": "tap --coverage test.es5/*.js",
+    "test": "tap --coverage test/*.js",
     "publish": "npm run transpile:bin",
     "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
-    "transpile:test": "babel --out-dir test.es5 test",
-    "transpile:lib": "babel --out-dir lib.es5 lib",
-    "transpile:bin": "babel --out-dir bin.es5 bin"
+    "transpile:test": "babel --out-dir . test/*.es6",
+    "transpile:lib": "babel --out-dir . lib/*.es6",
+    "transpile:bin": "babel --out-dir . bin/*.es6"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "homepage": "https://www.npmjs.com/package/@dotnetcarpenter/firefund-cli#readme",
   "#dependencies": "TODO: change latest to contemporary versions when we are close to shipping first real version",
   "devDependencies": {
+    "eol": "^0.2.0",
     "tap": "git://github.com/dotnetCarpenter/node-tap.git#pipecover-notest"
   },
   "dependencies": {
