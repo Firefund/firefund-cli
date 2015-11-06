@@ -3,9 +3,9 @@
   "version": "0.3.0",
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
-    "assets": "bin.es5/assets.js",
-    "server": "bin.es5/server.js",
-    "css": "bin.es5/css.js",
+    "assets": "bin/assets.js",
+    "server": "bin/server.js",
+    "css": "bin/css.js",
     "postcss": "./node_modules/.bin/postcss"
   },
   "scripts": {
