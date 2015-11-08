@@ -17,7 +17,6 @@ function kill(child) {
 }
 
 tap.test("server.es6::missing first argument", function(t) {
-  var actual, expected
   const env = process.env,
         server = require.resolve("../bin/server")
   let args = [""],
@@ -43,7 +42,6 @@ tap.test("server.es6::missing first argument", function(t) {
 })
 
 tap.test("server.es6::missing second argument", function(t) {
-  var actual, expected
   const env = process.env,
         server = require.resolve("../bin/server")
   let args = ["test/fixtures"],
@@ -67,16 +65,15 @@ tap.test("server.es6::missing second argument", function(t) {
     timerId = timer(childKiller)
   })
 })
-/*
+/* TODO: finish test of bin/server
 tap.test("server.es6", function(t) {
-  var actual, expected
   const env = process.env,
         args = ["test/fixtures", "test/fixtures"],
-        server = require.resolve("../bin/server")
-  const child = spawn(server, args, {
-    env,
-    stdio: "pipe"
-  })
+        server = require.resolve("../bin/server"),
+        stdio = "pipe",
+        child = createChild({ env, args, server, stdio })
+  let output = "",
+      expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures"
 
   t.plan(1)
 
@@ -85,14 +82,23 @@ tap.test("server.es6", function(t) {
   child.stderr.setEncoding("utf8")
 
   child.on('exit', code => {
-    t.ok(code === 0, "should exit with error code 0")
+    t.ok(code|0 === 0, "should exit with error code 0")
     console.log( "stderr says:", child.stderr.read() )
     console.log( "stdout says:", child.stdout.read() )
     console.log( "stdin says:", child.stdin.read() )
     t.end()
   })
+  child.stdin.on("data", (chunk) => {
+    output += chunk
+    if(output.indexOf(expectedOutput)) {
+
+      t.end()
+    }
+  })
+
   setTimeout(() => {
     child.kill("SIGTERM")
   }, 1000)
+
 })
 */
