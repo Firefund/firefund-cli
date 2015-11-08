@@ -4,22 +4,31 @@ const tap = require("tap")
 const spawn = require("child_process").spawn
 const eol = require("eol")
 
-tap.test("server.es6::missing arguments", function(t) {
+function createChild({ server, args, env, stdio }) {
+  return spawn(server, args, { env, stdio })
+}
+function timer(fn) {
+  return setTimeout(fn, 100)
+}
+function kill(child) {
+  return function() {
+    child.kill("SIGTERM")
+  }
+}
+
+tap.test("server.es6::missing first argument", function(t) {
   var actual, expected
   const env = process.env,
-        args = [""],
         server = require.resolve("../bin/server")
-  let child = spawn(server, args, {
-        env,
-        stdio: ["ignore", "ignore", "pipe"]
-      }),
+  let args = [""],
+      child = createChild({ server, args, env, stdio: ["ignore", "ignore", "pipe"] }),
       timerId,
-      errorOutput = ""
+      errorOutput = "",
+      childKiller = kill(child)
 
   t.plan(2)
 
   child.stderr.setEncoding("utf8")
-
   child.on('exit', code => {
     t.ok(code === 1, "should exit with error code 1")
     t.equal( eol.lf( errorOutput ), "Root path for ecstatic is required as first argument\n" )
@@ -29,22 +38,40 @@ tap.test("server.es6::missing arguments", function(t) {
     if(timerId)
       clearTimeout(timerId)
     errorOutput += chunk
-    timerId = timer(kill)
+    timerId = timer(childKiller)
   })
+})
 
-  function timer(fn) {
-    return setTimeout(fn, 100)
-  }
+tap.test("server.es6::missing second argument", function(t) {
+  var actual, expected
+  const env = process.env,
+        server = require.resolve("../bin/server")
+  let args = ["test/fixtures"],
+      child = createChild({ server, args, env, stdio: ["ignore", "ignore", "pipe"] }),
+      timerId,
+      errorOutput = "",
+      childKiller = kill(child)
 
-  function kill() {
-    child.kill("SIGTERM")
-  }
+  t.plan(2)
+
+  child.stderr.setEncoding("utf8")
+  child.on('exit', code => {
+    t.ok(code === 1, "should exit with error code 1")
+    t.equal( eol.lf( errorOutput ), "Watch path for livereload is required as second argument\n" )
+    t.end()
+  })
+  child.stderr.on("data", (chunk) => {
+    if(timerId)
+      clearTimeout(timerId)
+    errorOutput += chunk
+    timerId = timer(childKiller)
+  })
 })
 /*
 tap.test("server.es6", function(t) {
   var actual, expected
   const env = process.env,
-        args = ["test/fixtures", "test/fixtures/"],
+        args = ["test/fixtures", "test/fixtures"],
         server = require.resolve("../bin/server")
   const child = spawn(server, args, {
     env,
