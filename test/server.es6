@@ -3,9 +3,11 @@
 const tap = require("tap")
 const spawn = require("child_process").spawn
 const eol = require("eol")
+const path = require("path")
+const nodejs = process.execPath
 
-function createChild({ server, args, env, stdio }) {
-  return spawn(server, args, { env, stdio })
+function createChild({ args, env, stdio }) {
+  return spawn(nodejs, args, { env, stdio })
 }
 function timer(fn) {
   return setTimeout(fn, 100)
@@ -17,10 +19,9 @@ function kill(child) {
 }
 
 tap.test("server.es6::missing first argument", function(t) {
-  const env = process.env,
-        server = require.resolve("../bin/server")
-  let args = [""],
-      child = createChild({ server, args, env, stdio: ["ignore", "ignore", "pipe"] }),
+  const env = process.env
+  let args = [require.resolve("../bin/server")],
+      child = createChild({ args, env, stdio: ["ignore", "ignore", "pipe"] }),
       timerId,
       errorOutput = "",
       childKiller = kill(child)
@@ -44,8 +45,8 @@ tap.test("server.es6::missing first argument", function(t) {
 tap.test("server.es6::missing second argument", function(t) {
   const env = process.env,
         server = require.resolve("../bin/server")
-  let args = ["test/fixtures"],
-      child = createChild({ server, args, env, stdio: ["ignore", "ignore", "pipe"] }),
+  let args = [server, "test/fixtures"],
+      child = createChild({ args, env, stdio: ["ignore", "ignore", "pipe"] }),
       timerId,
       errorOutput = "",
       childKiller = kill(child)
