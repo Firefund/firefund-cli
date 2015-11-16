@@ -13,9 +13,7 @@ function timer(fn) {
   return setTimeout(fn, 100)
 }
 function kill(child) {
-  return function() {
-    child.kill("SIGTERM")
-  }
+  child.kill("SIGTERM")
 }
 
 tap.test("server.es6::missing first argument", function(t) {
@@ -24,7 +22,7 @@ tap.test("server.es6::missing first argument", function(t) {
       child = createChild({ args, env, stdio: ["ignore", "ignore", "pipe"] }),
       timerId,
       errorOutput = "",
-      childKiller = kill(child)
+      childKiller = kill.bind(null, child)
 
   t.plan(2)
 
@@ -49,7 +47,7 @@ tap.test("server.es6::missing second argument", function(t) {
       child = createChild({ args, env, stdio: ["ignore", "ignore", "pipe"] }),
       timerId,
       errorOutput = "",
-      childKiller = kill(child)
+      childKiller = kill.bind(null, child)
 
   t.plan(2)
 
@@ -69,10 +67,10 @@ tap.test("server.es6::missing second argument", function(t) {
 /* TODO: finish test of bin/server
 tap.test("server.es6", function(t) {
   const env = process.env,
-        args = ["test/fixtures", "test/fixtures"],
         server = require.resolve("../bin/server"),
+        args = [server, "test/fixtures", "test/fixtures"],
         stdio = "pipe",
-        child = createChild({ env, args, server, stdio })
+        child = createChild({ env, args, stdio })
   let output = "",
       expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures"
 
@@ -83,7 +81,7 @@ tap.test("server.es6", function(t) {
   child.stderr.setEncoding("utf8")
 
   child.on('exit', code => {
-    t.ok(code|0 === 0, "should exit with error code 0")
+    t.ok((code|0) === 0, "should exit with error code 0")
     console.log( "stderr says:", child.stderr.read() )
     console.log( "stdout says:", child.stdout.read() )
     console.log( "stdin says:", child.stdin.read() )
@@ -92,7 +90,7 @@ tap.test("server.es6", function(t) {
   child.stdin.on("data", (chunk) => {
     output += chunk
     if(output.indexOf(expectedOutput)) {
-
+console.log("YAY!");
       t.end()
     }
   })
