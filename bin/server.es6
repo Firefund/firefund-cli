@@ -14,7 +14,7 @@ const c = require("../lib/common")
   , livereload = require("livereload")
   , http = require("http")
   , dirroot = path.normalize(process.cwd())
-  , server = livereload.createServer()
+  , server = livereload.createServer({ exts: ["htm", "html", "css", "js", "png", "gif", "jpg", "svg"] })
   , composeListeners = require("../lib/composer")
 
 if(!rootPath)
