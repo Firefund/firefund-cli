@@ -4,6 +4,8 @@ logs
 
 # IDE files
 .vscode
+typings/
+jsconfig.json
 
 # Runtime data
 pids
@@ -20,4 +22,4 @@ coverage
 node_modules
 
 # EcmaScript 5 files
-*.js
+# include so we can see the test coverage *.js
