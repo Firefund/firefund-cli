@@ -1,18 +1,18 @@
 "use strict";
 
-const tap = require("tap");
-const composer = require("../lib/composer");
+import tap from "tap"
+import composer from "../lib/composer"
 
 tap.test("Composed functions", function (t) {
-  var actual, expected
-  let timesToRegisterListener = 2
+  let actual, expected
   let timesListenersAreCalled = 0
+  const timesToRegisterListener = 2
 
   t.plan(timesToRegisterListener + 1)
   expected = "fake"
 
   // register listeners
-  let listeners = composer(listener, listener);
+  const listeners = composer(listener, listener);
   // call listeners with object
   listeners({
     url: "fake"

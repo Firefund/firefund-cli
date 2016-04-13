@@ -1,9 +1,10 @@
 "use strict";
 
-const tap = require("tap")
+import tap from "tap"
+import eol from "eol"
+import path from "path"
+import fs from "fs"
 const spawn = require("child_process").spawn
-const eol = require("eol")
-const path = require("path")
 const nodejs = process.execPath
 
 function createChild({ args, env, stdio }) {
@@ -64,17 +65,17 @@ tap.test("server.es6::missing second argument", function(t) {
     timerId = timer(childKiller)
   })
 })
-/* TODO: finish test of bin/server
-tap.test("server.es6", function(t) {
+
+tap.test("server.es6::Ecstatic startup message", function(t) {
   const env = process.env,
         server = require.resolve("../bin/server"),
         args = [server, "test/fixtures", "test/fixtures"],
         stdio = "pipe",
         child = createChild({ env, args, stdio })
   let output = "",
-      expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures"
+      expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n"
 
-  t.plan(1)
+  t.plan(2)
 
   child.stdin.setEncoding("utf8")
   child.stdout.setEncoding("utf8")
@@ -82,22 +83,16 @@ tap.test("server.es6", function(t) {
 
   child.on('exit', code => {
     t.ok((code|0) === 0, "should exit with error code 0")
-    console.log( "stderr says:", child.stderr.read() )
-    console.log( "stdout says:", child.stdout.read() )
-    console.log( "stdin says:", child.stdin.read() )
-    t.end()
+    /*console.log( "stderr says:", child.stderr.read() )
+    console.log( "stdout says:", child.stdout.read(), output )
+    console.log( "stdin says:", child.stdin.read() )*/
+    t.equal( eol.lf( output ), expectedOutput )
   })
-  child.stdin.on("data", (chunk) => {
+  child.stdout.on("data", (chunk) => {
     output += chunk
-    if(output.indexOf(expectedOutput)) {
-console.log("YAY!");
-      t.end()
-    }
   })
 
   setTimeout(() => {
     child.kill("SIGTERM")
   }, 1000)
-
 })
-*/
