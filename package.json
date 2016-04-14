@@ -23,6 +23,7 @@
   },
   "author": "dotnetCarpenter <jon.ronnenberg@gmail.com>",
   "license": "ISC",
+  "home": "https://github.com/Firefund/firefund-cli/",
   "bugs": {
     "url": "https://github.com/Firefund/firefund-cli/issues"
   },
