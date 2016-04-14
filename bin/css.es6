@@ -2,7 +2,7 @@
 
 "use strict";
 
-var c = require("../lib/common.js")
+const c = require("../lib/common.js")
   , args = c.args
   , shell = require("shelljs")
 
