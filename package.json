@@ -5,7 +5,7 @@
   "bin": {
     "assets": "bin/assets.js",
     "server": "bin/server.js",
-    "css": "bin/css.js -- ",
+    "css": "bin/css.js --",
     "postcss": "node_modules/.bin/postcss --"
   },
   "scripts": {
