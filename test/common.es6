@@ -6,20 +6,35 @@ const spawn = require("child_process").spawn
 const eol = require("eol")
 
 tap.test("common.args", function (t) {
-  var actual, expected
-  let args = common.args
+  let actual, expected
+  var args = common.args
 
-  t.plan(1)
+  t.plan(3)
 
   expected = null
   actual = args[0]
   t.ok(actual === expected, "there should be no arguments to this test")
+  
+  var env = process.env,
+      args = ["test/test/common.args.js", "test/a/number", "of/arguments"],
+      node = process.execPath
+  const child = spawn(node, args, {
+    env,
+    stdio: ['ignore', 'pipe', 'ignore']
+  })
 
-  t.end()
+  child.stdout.setEncoding("utf8")
+
+  child.on('exit', code => {
+    t.ok(code === 0, "should exit with NO error code (0)")
+    t.equal(eol.lf(child.stdout.read()), "test/a/number@@of/arguments\n")
+    t.end()
+  })
+
 })
 
 tap.test("common.fst()", function (t) {
-  var actual, expected
+  let actual, expected
 
   t.plan(2)
 
@@ -35,7 +50,7 @@ tap.test("common.fst()", function (t) {
 })
 
 tap.test("common.snd()", function (t) {
-  var actual, expected
+  let actual, expected
 
   t.plan(2)
 
@@ -51,7 +66,7 @@ tap.test("common.snd()", function (t) {
 })
 
 tap.test("common.getParameters()", function (t) {
-  var actual, expected
+  let actual, expected
 
   t.plan(2)
 
@@ -66,9 +81,9 @@ tap.test("common.getParameters()", function (t) {
   t.end()
 })
 tap.test("common.errorOut()", function(t) {
-  var actual, expected
+  let actual, expected
   const env = process.env,
-        args = ["test/test/common.errorOut.es6"],
+        args = ["test/test/common.errorOut.js"],
         node = process.execPath
   const child = spawn(node, args, {
     env,
