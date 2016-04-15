@@ -10,4 +10,4 @@ List of commands:
 
 - `assets`: Copy dependencies found in [bower.json](http://bower.io/docs/creating-packages/#bowerjson) to a directory specified as first argument
 - `server`: Starts an [ecstatic](https://github.com/jfhbrook/node-ecstatic/) server and uses [livereload](http://github.com/napcs/node-livereload/) to watch the directory given as the first argument
-- `css`
+- `css`: Passes commands to [postcss](https://github.com/postcss/postcss-cli/) but prepend them with [--use lost](https://github.com/peterramsing/lost/) and [--use cssnext](http://cssnext.io/)
