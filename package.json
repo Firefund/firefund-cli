@@ -6,7 +6,7 @@
     "assets": "bin/assets.js",
     "server": "bin/server.js",
     "css": "bin/css.js",
-    "postcss": "./node_modules/.bin/postcss"
+    "postcss": "node_modules/.bin/postcss"
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
