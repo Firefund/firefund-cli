@@ -5,8 +5,8 @@
   "bin": {
     "assets": "bin/assets.js",
     "server": "bin/server.js",
-    "css": "bin/css.js",
-    "postcss": "node_modules/.bin/postcss"
+    "css": "bin/css.js -- ",
+    "postcss": "node_modules/.bin/postcss --"
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
