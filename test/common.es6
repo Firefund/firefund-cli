@@ -5,29 +5,42 @@ const common = require("../lib/common")
 const spawn = require("child_process").spawn
 const eol = require("eol")
 
+function createChild({ exec=process.execPath, file, args=[], env=process.env, stdio }) {
+  args.unshift(file) // prepend file to args
+  const child = spawn(exec, args, { env, stdio }),
+        fileDescriptors = ["stdin", "stdout", "stderr"]
+
+  //setEncoding to utf8 for stdio file descriptors that is set to pipe
+  //to get a string instead of a bufffer when reading from them
+  fileDescriptors.forEach((fd, n) => {
+    if(stdio[n] === "pipe") child[fd].setEncoding("utf8")
+  })
+
+  return child
+}
+
 tap.test("common.args", function (t) {
   let actual, expected
-  var args = common.args
 
   t.plan(3)
 
-  expected = null
-  actual = args[0]
-  t.ok(actual === expected, "there should be no arguments to this test")
-  
-  var env = process.env,
-      args = ["test/test/common.args.js", "test/a/number", "of/arguments"],
-      node = process.execPath
-  const child = spawn(node, args, {
-    env,
+  expected = [null]
+  actual = common.args
+  t.deepEqual(actual, expected, "there should be no arguments to this test")
+
+
+
+  const child = createChild({
+    file: "test/test/common.args.js",
+    args: ["test/a/number", "of/arguments"],
     stdio: ['ignore', 'pipe', 'ignore']
   })
 
-  child.stdout.setEncoding("utf8")
-
   child.on('exit', code => {
+    let expected = "test/a/number@@of/arguments\n",
+        actual = child.stdout.read()
     t.ok(code === 0, "should exit with NO error code (0)")
-    t.equal(eol.lf(child.stdout.read()), "test/a/number@@of/arguments\n")
+    t.equal(eol.lf(actual), expected, "should be two paths join together with @@")
     t.end()
   })
 
@@ -80,23 +93,22 @@ tap.test("common.getParameters()", function (t) {
 
   t.end()
 })
+
 tap.test("common.errorOut()", function(t) {
-  let actual, expected
-  const env = process.env,
-        args = ["test/test/common.errorOut.js"],
-        node = process.execPath
-  const child = spawn(node, args, {
-    env,
+  t.plan(2)
+
+  const child = createChild({
+    file: "test/test/common.errorOut.js",
     stdio: ['ignore', 'ignore', 'pipe']
   })
 
-  t.plan(2)
-
-  child.stderr.setEncoding("utf8")
 
   child.on('exit', code => {
+    let expected = "message\n",
+      actual = child.stderr.read()
+
     t.ok(code === 1, "should exit with error code 1")
-    t.equal(eol.lf(child.stderr.read()), "message\n")
+    t.equal(eol.lf(actual), expected, "should have 'message' in stderr")
     t.end()
   })
 })

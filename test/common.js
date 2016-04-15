@@ -5,30 +5,50 @@ var common = require("../lib/common");
 var spawn = require("child_process").spawn;
 var eol = require("eol");
 
+function createChild(_ref) {
+  var _ref$exec = _ref.exec;
+  var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
+  var file = _ref.file;
+  var _ref$args = _ref.args;
+  var args = _ref$args === undefined ? [] : _ref$args;
+  var _ref$env = _ref.env;
+  var env = _ref$env === undefined ? process.env : _ref$env;
+  var stdio = _ref.stdio;
+
+  args.unshift(file); // prepend file to args
+  var child = spawn(exec, args, { env: env, stdio: stdio }),
+      fileDescriptors = ["stdin", "stdout", "stderr"];
+
+  //setEncoding to utf8 for stdio file descriptors that is set to pipe
+  //to get a string instead of a bufffer when reading from them
+  fileDescriptors.forEach(function (fd, n) {
+    if (stdio[n] === "pipe") child[fd].setEncoding("utf8");
+  });
+
+  return child;
+}
+
 tap.test("common.args", function (t) {
   var actual = void 0,
       expected = void 0;
-  var args = common.args;
 
   t.plan(3);
 
-  expected = null;
-  actual = args[0];
-  t.ok(actual === expected, "there should be no arguments to this test");
+  expected = [null];
+  actual = common.args;
+  t.deepEqual(actual, expected, "there should be no arguments to this test");
 
-  var env = process.env,
-      args = ["test/test/common.args.js", "test/a/number", "of/arguments"],
-      node = process.execPath;
-  var child = spawn(node, args, {
-    env: env,
+  var child = createChild({
+    file: "test/test/common.args.js",
+    args: ["test/a/number", "of/arguments"],
     stdio: ['ignore', 'pipe', 'ignore']
   });
 
-  child.stdout.setEncoding("utf8");
-
   child.on('exit', function (code) {
+    var expected = "test/a/number@@of/arguments\n",
+        actual = child.stdout.read();
     t.ok(code === 0, "should exit with NO error code (0)");
-    t.equal(eol.lf(child.stdout.read()), "test/a/number@@of/arguments\n");
+    t.equal(eol.lf(actual), expected, "should be two paths join together with @@");
     t.end();
   });
 });
@@ -83,24 +103,21 @@ tap.test("common.getParameters()", function (t) {
 
   t.end();
 });
+
 tap.test("common.errorOut()", function (t) {
-  var actual = void 0,
-      expected = void 0;
-  var env = process.env,
-      args = ["test/test/common.errorOut.js"],
-      node = process.execPath;
-  var child = spawn(node, args, {
-    env: env,
+  t.plan(2);
+
+  var child = createChild({
+    file: "test/test/common.errorOut.js",
     stdio: ['ignore', 'ignore', 'pipe']
   });
 
-  t.plan(2);
-
-  child.stderr.setEncoding("utf8");
-
   child.on('exit', function (code) {
+    var expected = "message\n",
+        actual = child.stderr.read();
+
     t.ok(code === 1, "should exit with error code 1");
-    t.equal(eol.lf(child.stderr.read()), "message\n");
+    t.equal(eol.lf(actual), expected, "should have 'message' in stderr");
     t.end();
   });
 });
