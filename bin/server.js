@@ -29,7 +29,7 @@ http.createServer(listeners).listen(8080);
 server.watch(path.resolve(dirroot, watchPath));
 
 function logPath(request, response) {
-  console.log(request.url);
+  console.log("[" + new Date(Date.now()).toLocaleString() + "]\t" + request.method + " request for " + request.url);
 }
 
 function setupEcstatic() {

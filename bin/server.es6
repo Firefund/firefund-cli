@@ -23,13 +23,13 @@ if(!rootPath)
 if(!watchPath)
   c.errorOut("Watch path for livereload is required as second argument")
 
-let listeners = composeListeners(logPath, setupEcstatic())
+const listeners = composeListeners(logPath, setupEcstatic())
 http.createServer(listeners).listen(8080);
 
 server.watch(path.resolve(dirroot, watchPath))
 
 function logPath(request, response) {
-  console.log(request.url)
+  console.log(`[${new Date(Date.now()).toLocaleString()}]\t${request.method} request for ${request.url}`)
 }
 
 function setupEcstatic() {
