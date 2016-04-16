@@ -1,15 +1,15 @@
-"use strict";
+"use strict"
 
 import path from "path"
-const tap = require("tap")
-const common = require("../lib/common")
-const spawn = require("child_process").spawn
-const eol = require("eol")
-const shell = require("shelljs")
+import tap from "tap"
+import common from "../lib/common"
+import eol from "eol"
+import shell from "shelljs"
+import {spawn} from "child_process"
 
 function createChild({ exec=process.execPath, file, args=[], env=process.env, stdio=['ignore', 'ignore', 'ignore'] }) {
-  const spawnArgs = [file].concat.apply(args), // prepend file to args
-				child = spawn(exec, args, { env, stdio }),
+  const spawnArgs = [file, ...args], // prepend file to args
+				child = spawn(exec, spawnArgs, { env, stdio }),
         fileDescriptors = ["stdin", "stdout", "stderr"]
 
   //setEncoding to utf8 for stdio file descriptors that is set to pipe
@@ -24,19 +24,19 @@ function createChild({ exec=process.execPath, file, args=[], env=process.env, st
 tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)
 	
-  const args = (["fixtures/folder1/postcss.css", "-o test/temp.css"]).map(p => path.join(__dirname, p)),
+  const args = [path.resolve(__dirname, "./fixtures/folder1/postcss.css"), "-o", path.resolve(__dirname, "./test/temp.css")],
 				child = createChild({
-					file: "../bin/css.js",
+					file: require.resolve("../bin/css.js"),
 					args,
-					stdio: ['ignore', 'pipe', 'pipe']
+					stdio: ["ignore", "pipe", "pipe"]
 				})
-	
+
 	child.stderr.on("data", msg => console.error(msg))
 	child.stdout.on("data", msg => console.warn(msg))
 
   child.on('exit', code => {
     let filePath = common.snd(args),
-				actual = shell.test("-e", filePath),
+				actual = shell.test("-e", path.resolve(filePath)),
     		expected = true
 		// console.warn("CSS TEST COMMOND.SND!!!!", args, common.snd(args))
     t.equal(actual, expected, "test/temp.css should exist")

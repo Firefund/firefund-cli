@@ -4,13 +4,27 @@ var _path = require("path");
 
 var _path2 = _interopRequireDefault(_path);
 
+var _tap = require("tap");
+
+var _tap2 = _interopRequireDefault(_tap);
+
+var _common = require("../lib/common");
+
+var _common2 = _interopRequireDefault(_common);
+
+var _eol = require("eol");
+
+var _eol2 = _interopRequireDefault(_eol);
+
+var _shelljs = require("shelljs");
+
+var _shelljs2 = _interopRequireDefault(_shelljs);
+
+var _child_process = require("child_process");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var tap = require("tap");
-var common = require("../lib/common");
-var spawn = require("child_process").spawn;
-var eol = require("eol");
-var shell = require("shelljs");
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function createChild(_ref) {
 		var _ref$exec = _ref.exec;
@@ -23,9 +37,9 @@ function createChild(_ref) {
 		var _ref$stdio = _ref.stdio;
 		var stdio = _ref$stdio === undefined ? ['ignore', 'ignore', 'ignore'] : _ref$stdio;
 
-		var spawnArgs = [file].concat.apply(args),
+		var spawnArgs = [file].concat(_toConsumableArray(args)),
 		    // prepend file to args
-		child = spawn(exec, args, { env: env, stdio: stdio }),
+		child = (0, _child_process.spawn)(exec, spawnArgs, { env: env, stdio: stdio }),
 		    fileDescriptors = ["stdin", "stdout", "stderr"];
 
 		//setEncoding to utf8 for stdio file descriptors that is set to pipe
@@ -37,16 +51,14 @@ function createChild(_ref) {
 		return child;
 }
 
-tap.test("css::transpile postcss file to css", function (t) {
+_tap2.default.test("css::transpile postcss file to css", function (t) {
 		t.plan(1);
 
-		var args = ["fixtures/folder1/postcss.css", "-o test/temp.css"].map(function (p) {
-				return _path2.default.join(__dirname, p);
-		}),
+		var args = [_path2.default.resolve(__dirname, "./fixtures/folder1/postcss.css"), "-o", _path2.default.resolve(__dirname, "./test/temp.css")],
 		    child = createChild({
-				file: "../bin/css.js",
+				file: require.resolve("../bin/css.js"),
 				args: args,
-				stdio: ['ignore', 'pipe', 'pipe']
+				stdio: ["ignore", "pipe", "pipe"]
 		});
 
 		child.stderr.on("data", function (msg) {
@@ -57,20 +69,20 @@ tap.test("css::transpile postcss file to css", function (t) {
 		});
 
 		child.on('exit', function (code) {
-				var filePath = common.snd(args),
-				    actual = shell.test("-e", filePath),
+				var filePath = _common2.default.snd(args),
+				    actual = _shelljs2.default.test("-e", _path2.default.resolve(filePath)),
 				    expected = true;
 				// console.warn("CSS TEST COMMOND.SND!!!!", args, common.snd(args))
 				t.equal(actual, expected, "test/temp.css should exist");
 
 				// cleanup
-				if (shell.test("-e", filePath)) shell.rm(filePath);
+				if (_shelljs2.default.test("-e", filePath)) _shelljs2.default.rm(filePath);
 
 				t.end();
 		});
 });
 
-tap.test("css::transpile directory to new location while keeping directory structure", function (t) {
+_tap2.default.test("css::transpile directory to new location while keeping directory structure", function (t) {
 		var actual = void 0,
 		    expected = void 0;
 		t.end();
