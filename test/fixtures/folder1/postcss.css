@@ -1,0 +1,8 @@
+/* Variables */
+:root {
+	--color-red: hsla(1, 73.7%, 38.8%, 1);
+  --color-black: hsla(0, 0%, 0%, 1);
+}
+
+h1 {color: var(--color-black); }
+body { background-color: var(--color-red); }

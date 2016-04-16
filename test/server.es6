@@ -83,9 +83,9 @@ tap.test("server.es6::Ecstatic startup message", function(t) {
 
   child.on('exit', code => {
     t.ok((code|0) === 0, "should exit with error code 0")
-    /*console.log( "stderr says:", child.stderr.read() )
-    console.log( "stdout says:", child.stdout.read(), output )
-    console.log( "stdin says:", child.stdin.read() )*/
+    console.warn( "stderr says:", child.stderr.read() )
+    console.warn( "stdout says:", child.stdout.read(), output )
+    console.warn( "stdin says:", child.stdin.read() )
     t.equal( eol.lf( output ), expectedOutput )
   })
   child.stdout.on("data", (chunk) => {
