@@ -44,18 +44,29 @@ console.warn(postcssInput)*/
 //TODO: use shelljs to create a nodemon process that watches the develop css folder
 //TODO: make css create two builds, one for prod and one for dev (no minifying)
 
-// direct arguments/paramenters to postcss + adding some default plugins
+/**
+ * Spawn child process helper.
+ * @param {object} param
+ * @param  {string} param.exec    - path to executable, default: process.execPath
+ * @param  {string} param.file    - path to file you want to execute with exec
+ * @param  {string[]} param.args  - default: []
+ * @param  {object} param.env     - default: process.execPath
+ * @param  {string[]} param.stdio - default: ["ignore", "ignore", "ignore"]
+ * @param  {boolean[]} param.pipes- default: [true, true, true]}
+ * @return {child_process} A child process running your param.file
+ */
 function createChild(_ref) {
   var _ref$exec = _ref.exec;
-  var // candidate for common.es6
-  exec = _ref$exec === undefined ? process.execPath : _ref$exec;
+  var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
   var file = _ref.file;
   var _ref$args = _ref.args;
   var args = _ref$args === undefined ? [] : _ref$args;
   var _ref$env = _ref.env;
   var env = _ref$env === undefined ? process.env : _ref$env;
   var _ref$stdio = _ref.stdio;
-  var stdio = _ref$stdio === undefined ? ['ignore', 'ignore', 'ignore'] : _ref$stdio;
+  var stdio = _ref$stdio === undefined ? ["ignore", "ignore", "ignore"] : _ref$stdio;
+  var _ref$pipes = _ref.pipes;
+  var pipes = _ref$pipes === undefined ? [true, true, true] : _ref$pipes;
 
   var spawnArgs = [file].concat(_toConsumableArray(args)),
       // prepend file to args
@@ -77,6 +88,10 @@ function createChild(_ref) {
     fileDescriptors.forEach(closeFileDescriptor);
   });
 
+  //  for each true item in pipes,
+  // auto pipe file descriptors to their corresponding process file descriptor
+  fileDescriptors.forEach(pipeToProcess);
+
   return child;
 
   function autoRemoveFileDescriptor(fd, n, all) {
@@ -87,9 +102,14 @@ function createChild(_ref) {
     });
   }
   function closeFileDescriptor(fd) {
-    if (fd !== null && fd.destroyed === false) fd.end("Closing the fd for you - YEAH!", "utf8");
+    if (fd !== null && fd.destroyed === false) fd.destroy();
+  }
+  function pipeToProcess(fd, n) {
+    if (fd !== null && pipes[n]) fd.pipe(process[fileDescriptorNames[n]]);
   }
 }
+
+// direct arguments/paramenters to postcss + adding some default plugins
 // console.log( ["-u postcss-cssnext", "-u lost", ...args])
 // console.log("cwd:", process.cwd())
 var child = createChild({
@@ -97,8 +117,6 @@ var child = createChild({
   args: ["--use", "postcss-cssnext", "--use", "lost"].concat(_toConsumableArray(args)),
   stdio: ["ignore", "pipe", "pipe"]
 });
-child.stderr.pipe(process.stderr);
-child.stdout.pipe(process.stdout);
 
 // postcss([require("postcss-cssnext"), require("lost")]).process()
 // shell.exec(path.normalize(`${process.execPath} ${require.resolve("postcss")} --use postcss-cssnext --use lost ${args.join(" ")}`))

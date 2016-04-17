@@ -30,13 +30,24 @@ console.warn(postcssInput)*/
 //TODO: make css create two builds, one for prod and one for dev (no minifying)
 
 
-// direct arguments/paramenters to postcss + adding some default plugins
-function createChild({ // candidate for common.es6
+/**
+ * Spawn child process helper.
+ * @param {object} param
+ * @param  {string} param.exec    - path to executable, default: process.execPath
+ * @param  {string} param.file    - path to file you want to execute with exec
+ * @param  {string[]} param.args  - default: []
+ * @param  {object} param.env     - default: process.execPath
+ * @param  {string[]} param.stdio - default: ["ignore", "ignore", "ignore"]
+ * @param  {boolean[]} param.pipes- default: [true, true, true]}
+ * @return {child_process} A child process running your param.file
+ */
+function createChild({
     exec=process.execPath,
     file,
     args=[],
     env=process.env,
-    stdio=['ignore', 'ignore', 'ignore']
+    stdio=["ignore", "ignore", "ignore"],
+    pipes=[true, true, true]
 })
 {
   const spawnArgs = [file, ...args], // prepend file to args
@@ -57,6 +68,10 @@ function createChild({ // candidate for common.es6
   child.on("close", (code, signal) => {
     fileDescriptors.forEach(closeFileDescriptor)
   })
+  
+  //  for each true item in pipes,
+  // auto pipe file descriptors to their corresponding process file descriptor
+  fileDescriptors.forEach(pipeToProcess)
 
   return child
 
@@ -70,7 +85,12 @@ function createChild({ // candidate for common.es6
   function closeFileDescriptor(fd) {
     if(fd !== null && fd.destroyed === false) fd.destroy()
   }
+  function pipeToProcess(fd, n) {
+    if(fd !== null && pipes[n]) fd.pipe(process[fileDescriptorNames[n]])
+  }
 }
+
+// direct arguments/paramenters to postcss + adding some default plugins
 // console.log( ["-u postcss-cssnext", "-u lost", ...args])
 // console.log("cwd:", process.cwd())
 const child = createChild({
@@ -78,8 +98,6 @@ const child = createChild({
   args: ["--use", "postcss-cssnext", "--use", "lost", ...args],
   stdio: ["ignore", "pipe", "pipe"]
 })
-child.stderr.pipe(process.stderr)
-child.stdout.pipe(process.stdout)
 
 // postcss([require("postcss-cssnext"), require("lost")]).process()
 // shell.exec(path.normalize(`${process.execPath} ${require.resolve("postcss")} --use postcss-cssnext --use lost ${args.join(" ")}`))
