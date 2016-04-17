@@ -3,26 +3,38 @@
 "use strict";
 
 import * as c from "../lib/common.js"
-import * as path from "path"
-// import * as postcss from "postcss"
+import * as shell from "shelljs"
 const args = c.args
 
 //TODO: change the css command in firefund-cli to accept a directory and pass all the files to postcss
-// instead do: getParameters -o and get the last item from args
-/*const postcssInput = reject(args, concat(
-  c.getParameters("-d", args),
-  c.getParameters("--dir", args)
-))*/
-function reject(arr, selection) {
-  return arr.filter(n => selection.indexOf(n) === -1)
-}
+const postcssOutput = concat(
+  concat(
+    c.getParameters("-o", args),
+    c.getParameters("--output", args)
+  ),
+  concat(
+    c.getParameters("-d", args),
+    c.getParameters("--dir", args)
+  )
+)
+const postcssInput = reject(args, postcssOutput.concat(["-o", "--output", "-d", "-dir"]))
+if(isEmpty(postcssInput)) postcssInput.concat(args.slice(-1))
+
+
 function concat(arr1, arr2) {
   return [...arr1, ...arr2]
 }
-/*console.warn("POSTCSSINPUT!!!!!!!!!!!!!!!!!!!!!")
-console.warn(postcssInput)*/
+function isEmpty(array) { return array.length === 0 }
+function reject(arr, selection) {
+  return arr.filter(n => selection.indexOf(n) === -1)
+}
 
-//TODO: check for compiled css folder and create it if missing
+console.warn(postcssInput)
+console.warn(postcssOutput)
+
+//TODO: check for output css folder and create it if missing
+if(!shell.test("-e", c.fst(postcssOutput))) shell.mkdir("-p", postcssOutput)
+else if(!shell.test("-d", c.fst(postcssOutput))) throw new Error(`${c.fst(postcssOutput)} is not a directory`)
 //TODO: use shelljs to create a nodemon process that watches the develop css folder
 //TODO: make css create two builds, one for prod and one for dev (no minifying)
 
@@ -33,7 +45,8 @@ console.warn(postcssInput)*/
 const child = c.createChild({
   file: require.resolve("postcss-cli"),
   args: ["--use", "postcss-cssnext", "--use", "lost", ...args],
-  stdio: ["ignore", "pipe", "pipe"]
+  stdio: ["ignore", "pipe", "pipe"],
+  pipes: [false, true, true]
 })
 
 // postcss([require("postcss-cssnext"), require("lost")]).process()
