@@ -1,6 +1,5 @@
 "use strict"
 
-require("leaked-handles")
 import * as path from "path"
 import * as tap from "tap"
 import * as c from "../lib/common"
