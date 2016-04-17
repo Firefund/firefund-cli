@@ -26,12 +26,13 @@ function identity(x) { return x }
 /**
  * Spawn child process helper.
  * @param {object} _ref
- * @param  {string} _ref.exec    - path to executable, default: process.execPath
- * @param  {string} _ref.file    - path to file you want to execute with exec
- * @param  {string[]} _ref.args  - default: []
- * @param  {object} _ref.env     - default: process.execPath
- * @param  {string[]} _ref.stdio - default: ["ignore", "ignore", "ignore"]
- * @param  {boolean[]} _ref.pipes- default: [false, false, false]}
+ * @param  {string} _ref.exec       - path to executable, default: process.execPath
+ * @param  {string} _ref.file       - path to file you want to execute with exec
+ * @param  {string[]} _ref.args     - default: []
+ * @param  {object} _ref.env        - default: process.execPath
+ * @param  {string[]} _ref.stdio    - default: ["ignore", "ignore", "ignore"]
+ * @param  {boolean[]} _ref.pipes   - default: [false, false, false]}
+ * @param  {boolean[]} _ref.mutiple - default: 1
  * @return {child_process} A child process running your file
  */
 function createChild({
@@ -40,9 +41,12 @@ function createChild({
     args=[],
     env=process.env,
     stdio=["ignore", "ignore", "ignore"],
-    pipes=[false, false, false]
+    pipes=[false, false, false],
+    multiple=1
 })
 {
+  if(!file) throw new TypeError("path to the file you want to execute is omitted")
+
   const spawnArgs = [file, ...args], // prepend file to args
 				child = spawn(exec, spawnArgs, { env, stdio }),
         fileDescriptorNames = ["stdin", "stdout", "stderr"] 
@@ -89,7 +93,5 @@ export {
   fst,
   snd,
   getParameters,
-  /**
-   * @type {createChild} */
   createChild
 }
