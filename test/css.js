@@ -26,6 +26,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+require("leaked-handles");
+
+
 function createChild(_ref) {
 		var _ref$exec = _ref.exec;
 		var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
@@ -61,12 +64,8 @@ _tap2.default.test("css::transpile postcss file to css", function (t) {
 				stdio: ["ignore", "pipe", "pipe"]
 		});
 
-		child.stderr.on("data", function (msg) {
-				return console.error(msg);
-		});
-		child.stdout.on("data", function (msg) {
-				return console.warn(msg);
-		});
+		child.stderr.pipe(process.stderr);
+		child.stdout.pipe(process.stdout);
 
 		child.on('exit', function (code) {
 				var filePath = _common2.default.snd(args),

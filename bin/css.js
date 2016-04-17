@@ -16,18 +16,20 @@ var _path2 = _interopRequireDefault(_path);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-// import shell from "shelljs"
 
+require("leaked-handles");
+// import shell from "shelljs"
 
 // import * as postcss from "postcss"
 var args = _common2.default.args;
 
 //TODO: change the css command in firefund-cli to accept a directory and pass all the files to postcss
-/*const postcssInput = invert(args, concat(
+// instead do: getParameters -o and get the last item from args
+/*const postcssInput = reject(args, concat(
   c.getParameters("-d", args),
   c.getParameters("--dir", args)
 ))*/
-function invert(arr, selection) {
+function reject(arr, selection) {
   return arr.filter(function (n) {
     return selection.indexOf(n) === -1;
   });
@@ -45,7 +47,8 @@ console.warn(postcssInput)*/
 // direct arguments/paramenters to postcss + adding some default plugins
 function createChild(_ref) {
   var _ref$exec = _ref.exec;
-  var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
+  var // candidate for common.es6
+  exec = _ref$exec === undefined ? process.execPath : _ref$exec;
   var file = _ref.file;
   var _ref$args = _ref.args;
   var args = _ref$args === undefined ? [] : _ref$args;
@@ -57,29 +60,32 @@ function createChild(_ref) {
   var spawnArgs = [file].concat(_toConsumableArray(args)),
       // prepend file to args
   child = (0, _child_process.spawn)(exec, spawnArgs, { env: env, stdio: stdio }),
-      fileDescriptors = ["stdin", "stdout", "stderr"];
-  console.log("spawnArgs", spawnArgs);
+      fileDescriptorNames = ["stdin", "stdout", "stderr"];
+  // console.log("spawnArgs", spawnArgs)
+
   //setEncoding to utf8 for stdio file descriptors that is set to pipe
   //to get a string instead of a bufffer when reading from them
-  fileDescriptors.forEach(function (fd, n) {
-    if (stdio[n] === "pipe") child[fd].setEncoding("utf8");
+  var fileDescriptors = fileDescriptorNames.map(function (fd, n) {
+    return stdio[n] === "pipe" ? child[fd].setEncoding("utf8") : child[fd];
+  });
+  // console.dir(fileDescriptors)
+  child.on("exit", function (code, signal) {
+    fileDescriptors.forEach(function (fd) {
+      if (fd !== null) fd.end("Closing the fd for you - YEAH!");
+    });
   });
 
   return child;
 }
-console.log(["-u postcss-cssnext", "-u lost"].concat(_toConsumableArray(args)));
-console.log("env:", process.cwd());
+// console.log( ["-u postcss-cssnext", "-u lost", ...args])
+// console.log("cwd:", process.cwd())
 var child = createChild({
   file: require.resolve("postcss-cli"),
   args: ["--use", "postcss-cssnext", "--use", "lost"].concat(_toConsumableArray(args)),
   stdio: ["ignore", "pipe", "pipe"]
 });
-child.stderr.on("data", function (msg) {
-  return console.error(msg);
-});
-child.stdout.on("data", function (msg) {
-  return console.warn(msg);
-});
+child.stderr.pipe(process.stderr);
+child.stdout.pipe(process.stdout);
 
 // postcss([require("postcss-cssnext"), require("lost")]).process()
 // shell.exec(path.normalize(`${process.execPath} ${require.resolve("postcss")} --use postcss-cssnext --use lost ${args.join(" ")}`))

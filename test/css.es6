@@ -1,5 +1,6 @@
 "use strict"
 
+require("leaked-handles")
 import path from "path"
 import tap from "tap"
 import common from "../lib/common"
@@ -24,15 +25,19 @@ function createChild({ exec=process.execPath, file, args=[], env=process.env, st
 tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)
 	
-  const args = [path.resolve(__dirname, "./fixtures/folder1/postcss.css"), "-o", path.resolve(__dirname, "./test/temp.css")],
-				child = createChild({
-					file: require.resolve("../bin/css.js"),
-					args,
-					stdio: ["ignore", "pipe", "pipe"]
-				})
+  const args = [
+			path.resolve(__dirname, "./fixtures/folder1/postcss.css"),
+			"-o",
+			path.resolve(__dirname, "./test/temp.css")
+	],
+	child = createChild({
+		file: require.resolve("../bin/css.js"),
+		args,
+		stdio: ["ignore", "pipe", "pipe"]
+	})
 
-	child.stderr.on("data", msg => console.error(msg))
-	child.stdout.on("data", msg => console.warn(msg))
+	child.stderr.pipe(process.stderr)
+	child.stdout.pipe(process.stdout)
 
   child.on('exit', code => {
     let filePath = common.snd(args),
