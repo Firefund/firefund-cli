@@ -32,7 +32,7 @@ function identity(x) { return x }
  * @param  {object} _ref.env        - default: process.execPath
  * @param  {string[]} _ref.stdio    - default: ["ignore", "ignore", "ignore"]
  * @param  {boolean[]} _ref.pipes   - default: [false, false, false]}
- * @param  {boolean[]} _ref.mutiple - default: 1
+ * @param  {boolean[]} _ref.mutiple - NOT IMPLEMENTED determine how many process to create, default: 1
  * @return {child_process} A child process running your file
  */
 function createChild({
