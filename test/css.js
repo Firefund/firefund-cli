@@ -10,7 +10,7 @@ var _tap2 = _interopRequireDefault(_tap);
 
 var _common = require("../lib/common");
 
-var _common2 = _interopRequireDefault(_common);
+var c = _interopRequireWildcard(_common);
 
 var _eol = require("eol");
 
@@ -22,60 +22,33 @@ var _shelljs2 = _interopRequireDefault(_shelljs);
 
 var _child_process = require("child_process");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require("leaked-handles");
 
-
-function createChild(_ref) {
-		var _ref$exec = _ref.exec;
-		var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
-		var file = _ref.file;
-		var _ref$args = _ref.args;
-		var args = _ref$args === undefined ? [] : _ref$args;
-		var _ref$env = _ref.env;
-		var env = _ref$env === undefined ? process.env : _ref$env;
-		var _ref$stdio = _ref.stdio;
-		var stdio = _ref$stdio === undefined ? ['ignore', 'ignore', 'ignore'] : _ref$stdio;
-
-		var spawnArgs = [file].concat(_toConsumableArray(args)),
-		    // prepend file to args
-		child = (0, _child_process.spawn)(exec, spawnArgs, { env: env, stdio: stdio }),
-		    fileDescriptors = ["stdin", "stdout", "stderr"];
-
-		//setEncoding to utf8 for stdio file descriptors that is set to pipe
-		//to get a string instead of a bufffer when reading from them
-		fileDescriptors.forEach(function (fd, n) {
-				if (stdio[n] === "pipe") child[fd].setEncoding("utf8");
-		});
-
-		return child;
-}
 
 _tap2.default.test("css::transpile postcss file to css", function (t) {
 		t.plan(1);
 
 		var args = [_path2.default.resolve(__dirname, "./fixtures/folder1/postcss.css"), "-o", _path2.default.resolve(__dirname, "./test/temp.css")],
-		    child = createChild({
+		    child = c.createChild({
 				file: require.resolve("../bin/css.js"),
 				args: args,
-				stdio: ["ignore", "pipe", "pipe"]
+				stdio: ["ignore", "pipe", "pipe"],
+				pipes: [false, true, true]
 		});
 
-		child.stderr.pipe(process.stderr);
-		child.stdout.pipe(process.stdout);
-
 		child.on('exit', function (code) {
-				var filePath = _common2.default.snd(args),
+				var filePath = c.snd(args),
 				    actual = _shelljs2.default.test("-e", _path2.default.resolve(filePath)),
 				    expected = true;
-				// console.warn("CSS TEST COMMOND.SND!!!!", args, common.snd(args))
+				// console.warn("CSS TEST C.SND!!!!", args, c.snd(args))
 				t.equal(actual, expected, "test/temp.css should exist");
 
 				// cleanup
-				if (_shelljs2.default.test("-e", filePath)) _shelljs2.default.rm(filePath);
+				if (_shelljs2.default.test("-e", filePath)) _shelljs2.default.rm(filePath), console.warn("deleting file!!!");
 
 				t.end();
 		});

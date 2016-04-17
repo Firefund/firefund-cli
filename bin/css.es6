@@ -2,11 +2,8 @@
 
 "use strict";
 
-require("leaked-handles")
-import c from "../lib/common.js"
-// import shell from "shelljs"
-import {spawn} from "child_process"
-import path from "path"
+import * as c from "../lib/common.js"
+import * as path from "path"
 // import * as postcss from "postcss"
 const args = c.args
 
@@ -30,70 +27,10 @@ console.warn(postcssInput)*/
 //TODO: make css create two builds, one for prod and one for dev (no minifying)
 
 
-/**
- * Spawn child process helper.
- * @param {object} param
- * @param  {string} param.exec    - path to executable, default: process.execPath
- * @param  {string} param.file    - path to file you want to execute with exec
- * @param  {string[]} param.args  - default: []
- * @param  {object} param.env     - default: process.execPath
- * @param  {string[]} param.stdio - default: ["ignore", "ignore", "ignore"]
- * @param  {boolean[]} param.pipes- default: [true, true, true]}
- * @return {child_process} A child process running your param.file
- */
-function createChild({
-    exec=process.execPath,
-    file,
-    args=[],
-    env=process.env,
-    stdio=["ignore", "ignore", "ignore"],
-    pipes=[true, true, true]
-})
-{
-  const spawnArgs = [file, ...args], // prepend file to args
-				child = spawn(exec, spawnArgs, { env, stdio }),
-        fileDescriptorNames = ["stdin", "stdout", "stderr"] 
-// console.log("spawnArgs", spawnArgs)
-
-  //setEncoding to utf8 for stdio file descriptors that is set to pipe
-  //to get a string instead of a bufffer when reading from them
-  const fileDescriptors = fileDescriptorNames.map((fd, n) =>
-    stdio[n] === "pipe" ? child[fd].setEncoding("utf8") : child[fd]
-  )
-// console.dir(fileDescriptors)
-
-  // auto remove file descriptor if they are closed
-  fileDescriptors.forEach(autoRemoveFileDescriptor)
-
-  child.on("close", (code, signal) => {
-    fileDescriptors.forEach(closeFileDescriptor)
-  })
-  
-  //  for each true item in pipes,
-  // auto pipe file descriptors to their corresponding process file descriptor
-  fileDescriptors.forEach(pipeToProcess)
-
-  return child
-
-  function autoRemoveFileDescriptor(fd, n, all) {
-    if(fd === null) return
-    fd.on("close", () => {
-      const indexOfFileDescriptor = all.indexOf(fd)
-      if(indexOfFileDescriptor > -1) all[indexOfFileDescriptor] = null
-    })
-  }
-  function closeFileDescriptor(fd) {
-    if(fd !== null && fd.destroyed === false) fd.destroy()
-  }
-  function pipeToProcess(fd, n) {
-    if(fd !== null && pipes[n]) fd.pipe(process[fileDescriptorNames[n]])
-  }
-}
-
 // direct arguments/paramenters to postcss + adding some default plugins
 // console.log( ["-u postcss-cssnext", "-u lost", ...args])
 // console.log("cwd:", process.cwd())
-const child = createChild({
+const child = c.createChild({
   file: require.resolve("postcss-cli"),
   args: ["--use", "postcss-cssnext", "--use", "lost", ...args],
   stdio: ["ignore", "pipe", "pipe"]

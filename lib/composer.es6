@@ -1,5 +1,8 @@
 "use strict"
 
+/**
+ * @param {function[]} listeners
+ */
 function composer(...listener) {
   let listeners = []
   listeners.push(...listener)
@@ -9,4 +12,4 @@ function composer(...listener) {
   }
 }
 
-module.exports = composer
+export default composer

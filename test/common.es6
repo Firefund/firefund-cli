@@ -1,23 +1,9 @@
 "use strict";
 
-const tap = require("tap")
-const common = require("../lib/common")
-const spawn = require("child_process").spawn
-const eol = require("eol")
-
-function createChild({ exec=process.execPath, file, args=[], env=process.env, stdio }) {
-  args.unshift(file) // prepend file to args
-  const child = spawn(exec, args, { env, stdio }),
-        fileDescriptors = ["stdin", "stdout", "stderr"]
-
-  //setEncoding to utf8 for stdio file descriptors that is set to pipe
-  //to get a string instead of a bufffer when reading from them
-  fileDescriptors.forEach((fd, n) => {
-    if(stdio[n] === "pipe") child[fd].setEncoding("utf8")
-  })
-
-  return child
-}
+import tap from "tap"
+import * as common from "../lib/common"
+import {spawn} from "child_process"
+import eol from "eol"
 
 tap.test("common.args", function (t) {
   let actual, expected
@@ -30,7 +16,7 @@ tap.test("common.args", function (t) {
 
 
 
-  const child = createChild({
+  const child = common.createChild({
     file: "test/test/common.args.js",
     args: ["test/a/number", "of/arguments"],
     stdio: ['ignore', 'pipe', 'ignore']
@@ -97,11 +83,10 @@ tap.test("common.getParameters()", function (t) {
 tap.test("common.errorOut()", function(t) {
   t.plan(2)
 
-  const child = createChild({
+  const child = common.createChild({
     file: "test/test/common.errorOut.js",
     stdio: ['ignore', 'ignore', 'pipe']
   })
-
 
   child.on('exit', code => {
     let expected = "message\n",

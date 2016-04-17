@@ -1,34 +1,24 @@
 "use strict";
 
-var tap = require("tap");
-var common = require("../lib/common");
-var spawn = require("child_process").spawn;
-var eol = require("eol");
+var _tap = require("tap");
 
-function createChild(_ref) {
-  var _ref$exec = _ref.exec;
-  var exec = _ref$exec === undefined ? process.execPath : _ref$exec;
-  var file = _ref.file;
-  var _ref$args = _ref.args;
-  var args = _ref$args === undefined ? [] : _ref$args;
-  var _ref$env = _ref.env;
-  var env = _ref$env === undefined ? process.env : _ref$env;
-  var stdio = _ref.stdio;
+var _tap2 = _interopRequireDefault(_tap);
 
-  args.unshift(file); // prepend file to args
-  var child = spawn(exec, args, { env: env, stdio: stdio }),
-      fileDescriptors = ["stdin", "stdout", "stderr"];
+var _common = require("../lib/common");
 
-  //setEncoding to utf8 for stdio file descriptors that is set to pipe
-  //to get a string instead of a bufffer when reading from them
-  fileDescriptors.forEach(function (fd, n) {
-    if (stdio[n] === "pipe") child[fd].setEncoding("utf8");
-  });
+var common = _interopRequireWildcard(_common);
 
-  return child;
-}
+var _child_process = require("child_process");
 
-tap.test("common.args", function (t) {
+var _eol = require("eol");
+
+var _eol2 = _interopRequireDefault(_eol);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_tap2.default.test("common.args", function (t) {
   var actual = void 0,
       expected = void 0;
 
@@ -38,7 +28,7 @@ tap.test("common.args", function (t) {
   actual = common.args;
   t.deepEqual(actual, expected, "there should be no arguments to this test");
 
-  var child = createChild({
+  var child = common.createChild({
     file: "test/test/common.args.js",
     args: ["test/a/number", "of/arguments"],
     stdio: ['ignore', 'pipe', 'ignore']
@@ -48,12 +38,12 @@ tap.test("common.args", function (t) {
     var expected = "test/a/number@@of/arguments\n",
         actual = child.stdout.read();
     t.ok(code === 0, "should exit with NO error code (0)");
-    t.equal(eol.lf(actual), expected, "should be two paths join together with @@");
+    t.equal(_eol2.default.lf(actual), expected, "should be two paths join together with @@");
     t.end();
   });
 });
 
-tap.test("common.fst()", function (t) {
+_tap2.default.test("common.fst()", function (t) {
   var actual = void 0,
       expected = void 0;
 
@@ -70,7 +60,7 @@ tap.test("common.fst()", function (t) {
   t.end();
 });
 
-tap.test("common.snd()", function (t) {
+_tap2.default.test("common.snd()", function (t) {
   var actual = void 0,
       expected = void 0;
 
@@ -87,7 +77,7 @@ tap.test("common.snd()", function (t) {
   t.end();
 });
 
-tap.test("common.getParameters()", function (t) {
+_tap2.default.test("common.getParameters()", function (t) {
   var actual = void 0,
       expected = void 0;
 
@@ -104,10 +94,10 @@ tap.test("common.getParameters()", function (t) {
   t.end();
 });
 
-tap.test("common.errorOut()", function (t) {
+_tap2.default.test("common.errorOut()", function (t) {
   t.plan(2);
 
-  var child = createChild({
+  var child = common.createChild({
     file: "test/test/common.errorOut.js",
     stdio: ['ignore', 'ignore', 'pipe']
   });
@@ -117,7 +107,7 @@ tap.test("common.errorOut()", function (t) {
         actual = child.stderr.read();
 
     t.ok(code === 1, "should exit with error code 1");
-    t.equal(eol.lf(actual), expected, "should have 'message' in stderr");
+    t.equal(_eol2.default.lf(actual), expected, "should have 'message' in stderr");
     t.end();
   });
 });
