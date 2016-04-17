@@ -35,6 +35,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+// ecstatic exports in a very unusual way
+
+
 var rootPath = c.fst(c.args),
     watchPath = c.snd(c.args) // null or second argument to server
 ,
@@ -61,4 +64,4 @@ function setupEcstatic() {
   });
 }
 
-console.log("Running server on port http://localhost:8080 with root in %s and listening for changes in %s", rootPath, watchPath);
+console.log("Running server on port http://localhost:8080 with root in " + rootPath + " and listening for changes in " + watchPath);

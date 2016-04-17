@@ -68,26 +68,24 @@ tap.test("server.es6::Ecstatic startup message", function(t) {
   const child = createChild({
           file: require.resolve("../bin/server"),
           args: ["test/fixtures", "test/fixtures"],
-          stdio: ["pipe", "pipe", "pipe"]
+          stdio: ["ignore", "pipe", "ignore"]
         }),
-        expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n"
+        expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n",
+        childKiller = kill.bind(null, child)
         
-  let output = ""
+  let timerId,
+      output = ""
 
   t.plan(2)
 
   child.on('exit', code => {
     t.ok((code|0) === 0, "should exit with error code 0")
-    console.warn( "stderr says:", child.stderr.read() )
-    console.warn( "stdout says:", child.stdout.read(), output )
-    console.warn( "stdin says:", child.stdin.read() )
     t.equal( eol.lf( output ), expectedOutput )
   })
   child.stdout.on("data", (chunk) => {
+    if(timerId)
+      clearTimeout(timerId)
     output += chunk
+    timerId = timer(childKiller)
   })
-
-  setTimeout(() => {
-    child.kill("SIGTERM")
-  }, 1000)
 })
