@@ -37,11 +37,11 @@
     "livereload": "0.x",
     "lost": "6.x",
     "postcss-cli": "2.x",
-    "postcss-cssnext": "2.x",
-    "shelljs": "0.x"
+    "postcss-cssnext": "2.x"
   },
   "devDependencies": {
     "eol": "0.x",
-    "tap": "5.x"
+    "tap": "5.x",
+    "shelljs": "0.x"
   }
 }
