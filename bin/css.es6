@@ -54,20 +54,21 @@ function createChild({ // candidate for common.es6
   // auto remove file descriptor if they are closed
   fileDescriptors.forEach(autoRemoveFileDescriptor)
 
-  child.on("exit", (code, signal) => {
+  child.on("close", (code, signal) => {
     fileDescriptors.forEach(closeFileDescriptor)
   })
 
   return child
 
   function autoRemoveFileDescriptor(fd, n, all) {
+    if(fd === null) return
     fd.on("close", () => {
       const indexOfFileDescriptor = all.indexOf(fd)
       if(indexOfFileDescriptor > -1) all[indexOfFileDescriptor] = null
     })
   }
   function closeFileDescriptor(fd) {
-    if(fd !== null) fd.end("Closing the fd for you - YEAH!", "utf8")
+    if(fd !== null && fd.destroyed === false) fd.destroy()
   }
 }
 // console.log( ["-u postcss-cssnext", "-u lost", ...args])

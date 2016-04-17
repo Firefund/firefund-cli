@@ -69,13 +69,26 @@ function createChild(_ref) {
     return stdio[n] === "pipe" ? child[fd].setEncoding("utf8") : child[fd];
   });
   // console.dir(fileDescriptors)
-  child.on("exit", function (code, signal) {
-    fileDescriptors.forEach(function (fd) {
-      if (fd !== null) fd.end("Closing the fd for you - YEAH!");
-    });
+
+  // auto remove file descriptor if they are closed
+  fileDescriptors.forEach(autoRemoveFileDescriptor);
+
+  child.on("close", function (code, signal) {
+    fileDescriptors.forEach(closeFileDescriptor);
   });
 
   return child;
+
+  function autoRemoveFileDescriptor(fd, n, all) {
+    if (fd === null) return;
+    fd.on("close", function () {
+      var indexOfFileDescriptor = all.indexOf(fd);
+      if (indexOfFileDescriptor > -1) all[indexOfFileDescriptor] = null;
+    });
+  }
+  function closeFileDescriptor(fd) {
+    if (fd !== null && fd.destroyed === false) fd.end("Closing the fd for you - YEAH!", "utf8");
+  }
 }
 // console.log( ["-u postcss-cssnext", "-u lost", ...args])
 // console.log("cwd:", process.cwd())
