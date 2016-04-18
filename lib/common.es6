@@ -45,7 +45,7 @@ function createChild({
     multiple=1
 })
 {
-  if(!file) throw new TypeError("path to the file you want to execute is omitted")
+  if(!file) throw new TypeError("firefund-cli: path to the file you want to execute is omitted")
 
   const spawnArgs = [file, ...args], // prepend file to args
 				child = spawn(exec, spawnArgs, { env, stdio }),

@@ -20,7 +20,9 @@ var args = c.args;
 //TODO: change the css command in firefund-cli to accept a directory and pass all the files to postcss
 var postcssOutput = concat(concat(c.getParameters("-o", args), c.getParameters("--output", args)), concat(c.getParameters("-d", args), c.getParameters("--dir", args)));
 var postcssInput = reject(args, postcssOutput.concat(["-o", "--output", "-d", "-dir"]));
+
 if (isEmpty(postcssInput)) postcssInput.concat(args.slice(-1));
+if (isEmpty(postcssOutput)) throw new TypeError("firefund-cli: output location is ommitted");
 
 function concat(arr1, arr2) {
   return [].concat(_toConsumableArray(arr1), _toConsumableArray(arr2));

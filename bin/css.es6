@@ -18,7 +18,9 @@ const postcssOutput = concat(
   )
 )
 const postcssInput = reject(args, postcssOutput.concat(["-o", "--output", "-d", "-dir"]))
+
 if(isEmpty(postcssInput)) postcssInput.concat(args.slice(-1))
+if(isEmpty(postcssOutput)) throw new TypeError("firefund-cli: output location is ommitted")
 
 
 function concat(arr1, arr2) {
