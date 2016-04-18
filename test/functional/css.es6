@@ -2,10 +2,11 @@
 
 import * as path from "path"
 import * as tap from "tap"
-import * as c from "../lib/common"
+import * as c from "../../lib/common"
 import * as eol from "eol"
 import * as shell from "shelljs"
-import {spawn} from "child_process"
+
+const BIN_CSS_PATH = require.resolve("../../bin/css.js")
 
 function timer(fn) {
 	return setTimeout(fn, 100)
@@ -20,7 +21,7 @@ tap.test("css::transpile postcss file to css", t => {
 		path.join(__dirname, "./test/temp.css")
 	],
 	child = c.createChild({
-		file: require.resolve("../bin/css.js"),
+		file: BIN_CSS_PATH,
 		args,
 		stdio: ["ignore", "ignore", "pipe"],
     pipes: [false, false, true]

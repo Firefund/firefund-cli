@@ -4,7 +4,7 @@ var _tap = require("tap");
 
 var _tap2 = _interopRequireDefault(_tap);
 
-var _composer = require("../lib/composer");
+var _composer = require("../../lib/composer");
 
 var _composer2 = _interopRequireDefault(_composer);
 

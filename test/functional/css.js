@@ -8,7 +8,7 @@ var _tap = require("tap");
 
 var tap = _interopRequireWildcard(_tap);
 
-var _common = require("../lib/common");
+var _common = require("../../lib/common");
 
 var c = _interopRequireWildcard(_common);
 
@@ -20,9 +20,9 @@ var _shelljs = require("shelljs");
 
 var shell = _interopRequireWildcard(_shelljs);
 
-var _child_process = require("child_process");
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var BIN_CSS_PATH = require.resolve("../../bin/css.js");
 
 function timer(fn) {
 	return setTimeout(fn, 100);
@@ -33,7 +33,7 @@ tap.test("css::transpile postcss file to css", function (t) {
 
 	var args = [path.resolve(__dirname, "./fixtures/folder1/postcss.css"), "-o", path.join(__dirname, "./test/temp.css")],
 	    child = c.createChild({
-		file: require.resolve("../bin/css.js"),
+		file: BIN_CSS_PATH,
 		args: args,
 		stdio: ["ignore", "ignore", "pipe"],
 		pipes: [false, false, true]

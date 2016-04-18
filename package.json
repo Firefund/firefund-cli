@@ -9,10 +9,14 @@
   },
   "scripts": {
     "pretest": "npm run --silent transpile",
-    "test": "tap --coverage test/*.js",
+    "test": "tap --coverage test/unittest/*.js test/functional/*.js",
+    "pretest:unit": "babel --out-dir . test/unittest/*.es6",
+    "test:unit": "tap test/unittest/*.js",
+    "test:functional": "tap test/functional/*.js",
+    "pretest:functional": "babel --out-dir . test/functional/*.es6",
     "prepublish": "npm run transpile:bin",
-    "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
-    "transpile:test": "babel --out-dir . test/*.es6",
+    "transpile": "npm run --silent transpile:lib & npm run --silent transpile:bin & npm run --silent transpile:test",
+    "transpile:test": "babel --out-dir . test/**/*.es6",
     "transpile:lib": "babel --out-dir . lib/*.es6",
     "transpile:bin": "babel --out-dir . bin/*.es6"
   },

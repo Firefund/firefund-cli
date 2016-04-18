@@ -4,8 +4,9 @@ import * as tap from "tap"
 import * as eol from "eol"
 import * as path from "path"
 import * as fs from "fs"
-import {createChild} from "../lib/common"
+import {createChild} from "../../lib/common"
 
+const BIN_SERVER_PATH = require.resolve("../../bin/server")
 
 function timer(fn) {
   return setTimeout(fn, 100)
@@ -16,8 +17,7 @@ function kill(child) {
 
 tap.test("server.es6::missing first argument", function(t) {
   let child = createChild({
-    file: require.resolve("../bin/server"),
-    stdio: ["ignore", "ignore", "pipe"]
+    file: BIN_SERVER_PATH,    stdio: ["ignore", "ignore", "pipe"]
   }),
       timerId,
       errorOutput = "",
@@ -40,8 +40,7 @@ tap.test("server.es6::missing first argument", function(t) {
 
 tap.test("server.es6::missing second argument", function(t) {
   const child = createChild({
-          file: require.resolve("../bin/server"),
-          args: ["test/fixtures"],
+          file: BIN_SERVER_PATH,          args: ["test/fixtures"],
           stdio: ["ignore", "ignore", "pipe"]
         }),
         childKiller = kill.bind(null, child)
@@ -66,8 +65,7 @@ tap.test("server.es6::missing second argument", function(t) {
 
 tap.test("server.es6::Ecstatic startup message", function(t) {
   const child = createChild({
-          file: require.resolve("../bin/server"),
-          args: ["test/fixtures", "test/fixtures"],
+          file: BIN_SERVER_PATH,          args: ["test/fixtures", "test/fixtures"],
           stdio: ["ignore", "pipe", "ignore"]
         }),
         expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n",

@@ -16,9 +16,11 @@ var _fs = require("fs");
 
 var fs = _interopRequireWildcard(_fs);
 
-var _common = require("../lib/common");
+var _common = require("../../lib/common");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var BIN_SERVER_PATH = require.resolve("../../bin/server");
 
 function timer(fn) {
   return setTimeout(fn, 100);
@@ -29,8 +31,7 @@ function kill(child) {
 
 tap.test("server.es6::missing first argument", function (t) {
   var child = (0, _common.createChild)({
-    file: require.resolve("../bin/server"),
-    stdio: ["ignore", "ignore", "pipe"]
+    file: BIN_SERVER_PATH, stdio: ["ignore", "ignore", "pipe"]
   }),
       timerId = void 0,
       errorOutput = "",
@@ -52,8 +53,7 @@ tap.test("server.es6::missing first argument", function (t) {
 
 tap.test("server.es6::missing second argument", function (t) {
   var child = (0, _common.createChild)({
-    file: require.resolve("../bin/server"),
-    args: ["test/fixtures"],
+    file: BIN_SERVER_PATH, args: ["test/fixtures"],
     stdio: ["ignore", "ignore", "pipe"]
   }),
       childKiller = kill.bind(null, child);
@@ -77,8 +77,7 @@ tap.test("server.es6::missing second argument", function (t) {
 
 tap.test("server.es6::Ecstatic startup message", function (t) {
   var child = (0, _common.createChild)({
-    file: require.resolve("../bin/server"),
-    args: ["test/fixtures", "test/fixtures"],
+    file: BIN_SERVER_PATH, args: ["test/fixtures", "test/fixtures"],
     stdio: ["ignore", "pipe", "ignore"]
   }),
       expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n",
