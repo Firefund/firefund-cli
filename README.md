@@ -12,3 +12,7 @@ List of commands:
 - `assets`: Copy dependencies found in [bower.json](http://bower.io/docs/creating-packages/#bowerjson) to a directory specified as first argument
 - `server`: Starts an [ecstatic](https://github.com/jfhbrook/node-ecstatic/) server and uses [livereload](http://github.com/napcs/node-livereload/) to watch the directory given as the first argument
 - `css`: Passes commands to [postcss](https://github.com/postcss/postcss-cli/) but prepend them with [--use lost](https://github.com/peterramsing/lost/) and [--use cssnext](http://cssnext.io/)
+
+### Transpiling
+Includes [babel](http://babeljs.io/docs/usage/cli/). All js files are saved with the `.es6` extension.
+You can auto transpile what has changed by running `make -j`. You need to have [make](https://www.gnu.org/software/make/) installed on your system. 
