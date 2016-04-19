@@ -5,9 +5,38 @@ import * as shell from "shelljs"
 import {EventEmitter} from "events"
 import * as path from "path"
 
-export default postcssHandler 
+export {
+	postcssHandler,
+	callPath
+}
 
 const eventEmitter = new EventEmitter()
+
+function callPath(args) {
+	const types = ["-r","-d","-o"]
+	const alternatives = ["--replace","--dir","--output"]
+	const callTypes = zip(types, alternatives).map(flags => flags
+		.map(flag => getParameters(flag))
+		/*.map()
+		.filter(x => x)*/
+	)
+	console.log(callTypes)
+}
+function zipWith(f, xs, ys) {
+	if(isEmpty(xs || isEmpty(ys))) return []
+  let x = xs[0],
+      y = ys[0]
+  xs = xs.slice(1)
+  ys = ys.slice(1)
+  return [f(x, y)].concat(zipWith(f, xs, ys))
+}
+/* zip :: [a] -> [b] -> [(a, b)] */
+function zip(a,b) {
+  if(isEmpty(a || isEmpty(b))) return []
+  let x = a[0],
+      y = b[0]
+  return [[x, y]].concat(zip(a.slice(1), b.slice(1)))
+}
 
 function postcssHandler(args) {
 	const postcssOutput = getOutputTarget(args)
