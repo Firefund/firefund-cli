@@ -118,9 +118,12 @@ var dirAsFile2 = ["-o", INPUTFILE];
 var fileAsDir1 = ["-d", TEMPDIR];
 var fileAsDir2 = ["-d", TEMPDIR];
 
-(0, _postcss.callPath)(fileToReplace);
-(0, _postcss.callPath)(fileToDir);
-(0, _postcss.callPath)(fileToFile);
+/*	callPath(fileToReplace)
+	callPath(fileToDir)
+	callPath(fileToFile)*/
+(0, _postcss.callPath)(mixedToReplace);
+(0, _postcss.callPath)(mixedToDir);
+(0, _postcss.callPath)(mixedToFile);
 // })
 
 /*tap.test("css::transpile postcss file to css", t => {

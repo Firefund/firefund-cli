@@ -21,7 +21,11 @@ function getParameters(get, parameters) {
 }
 
 function identity(x) { return x }
- 
+
+/** isEmpty :: [a] -> Bool */
+function isEmpty(array) { return array.length === 0 }
+/** isNotEmpty :: [a] -> Bool */
+function isNotEmpty(a) { return !isEmpty(a)}
 
 /**
  * Spawn child process helper.
@@ -93,6 +97,8 @@ export {
   fst,
   snd,
   identity,
+  isEmpty,
+  isNotEmpty,
   getParameters,
   createChild
 }

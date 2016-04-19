@@ -1,6 +1,7 @@
 ﻿"use strict";
 
-import {getParameters, createChild, args, fst, identity} from "../lib/common"
+import {getParameters, createChild, args, fst, identity, isEmpty, isNotEmpty} from "../lib/common"
+import {compose} from "../lib/composer"
 import * as shell from "shelljs"
 import {EventEmitter} from "events"
 import * as path from "path"
@@ -14,6 +15,8 @@ const typeHandlers = [
 	class Replace {
 		constructor(output) {
 			console.log("Replace", output)
+			const path = fst(output)
+			if( shell.test("-d", path) ) throw new Error("Not implemented by postcss-cli")
 		}
 	},
 	class Directory {
@@ -39,17 +42,31 @@ function callPath(parameters) {
 				.map( flag => getParameters(flag, args) )
 				.filter( isNotEmpty )		
 	).map( (path, i, all) => path.length ? new typeHandlers[i](fst(path)) : null )*/
-	const callTypes = convertPathsToObject(
+	/*const CallType = convertPathsToObject(
+		typeHandlers,
 		getPathFromParameters(
 			parameters, searchWith(types, alternatives)
-		),
-		typeHandlers
+		)		
+	).filter(identity)*/
+	const getCallType = compose(
+		searchWith,
+		callWith(getPathFromParameters, parameters),
+		callWith(convertPathsToObject, typeHandlers),
+		(x) => Array.prototype.filter.call(x, identity)
 	)
+	const CallType = getCallType(types, alternatives)
 	
-	console.log(callTypes)
+	
+	
+	console.log(new CallType[0])
 }
 /** searchWith :: [a] -> [b] -> [c] */
 function searchWith(a,b) { return zip(a,b) }
+/** callWith :: [a] -> [b] -> M(a) */
+function callWith(fn, ...a) {
+	// it seems that a bug in babel scoping prevents us from using 'args' as named argument
+	return fn.bind(null, ...a)
+}
 /** getPathForParameters :: (String a) => [a] -> [a] -> [a] */
 function getPathFromParameters(parameters, search) {
 	return search.map(
@@ -60,9 +77,9 @@ function getPathFromParameters(parameters, search) {
 	)
 }
 /** convertPathsToObject :: (String a) => [a] -> [b] -> [b] */
-function convertPathsToObject(paths, classTuple) {
+function convertPathsToObject(classTuple, paths) {
 	return paths.map(
-		(path, i) => isNotEmpty(path) && new classTuple[i](fst(path))
+		(path, i) => isNotEmpty(path) && classTuple[i].bind(null, fst(path))
 	)
 }
 /* zipWith :: (a -> b -> c) -> [a] -> [b] -> [c] */
@@ -81,8 +98,7 @@ function zip(a,b) {
       y = b[0]
   return [[x, y]].concat(zip(a.slice(1), b.slice(1)))
 }
-/** isNotEmpty :: [a] -> Bool */
-function isNotEmpty(a) { return !isEmpty(a)}
+
 /** is element in array
  *  elem :: (Eq a) => a -> [a] -> Bool */
 function elem (a, b) {
@@ -163,8 +179,6 @@ function transpileFiles(target, args) {
 function concat(arr1, arr2) {
   return [...arr1, ...arr2]
 }
-/** isEmpty :: [a] -> Bool */
-function isEmpty(array) { return array.length === 0 }
 /** reject :: [a] -> [b] -> [c] */
 function reject(arr, selection) {
   return arr.filter(n => selection.indexOf(n) === -1)
