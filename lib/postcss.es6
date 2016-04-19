@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-import {getParameters, createChild, args, fst} from "../lib/common"
+import {getParameters, createChild, args, fst, identity} from "../lib/common"
 import * as shell from "shelljs"
 import {EventEmitter} from "events"
 import * as path from "path"
@@ -13,33 +13,59 @@ export {
 const typeHandlers = [
 	class Replace {
 		constructor(output) {
-			
+			console.log("Replace", output)
 		}
 	},
 	class Directory {
-		constructor(output) {}
+		constructor(output) {
+			console.log("Directory", output)
+		}
 	},
 	class File {
-		constructor(output) {}
+		constructor(output) {
+			console.log("File", output)
+		}
 	}
 ]
 
 const eventEmitter = new EventEmitter()
 
-function callPath(args) {
+function callPath(parameters) {
 	const types = ["-r","-d","-o"]
 	const alternatives = ["--replace","--dir","--output"]
-	const callTypes = zip(types, alternatives).map(
-		flags => fst(
+/*const callTypes = zip(types, alternatives).map(
+		flags => 
 			flags
 				.map( flag => getParameters(flag, args) )
-			//	.filter( identity )
-		)
-//	.filter( identity )
-	).map( (path, i, all) => path.length ? new typeHandlers[i](fst(path)) : null )
+				.filter( isNotEmpty )		
+	).map( (path, i, all) => path.length ? new typeHandlers[i](fst(path)) : null )*/
+	const callTypes = convertPathsToObject(
+		getPathFromParameters(
+			parameters, searchWith(types, alternatives)
+		),
+		typeHandlers
+	)
 	
 	console.log(callTypes)
 }
+/** searchWith :: [a] -> [b] -> [c] */
+function searchWith(a,b) { return zip(a,b) }
+/** getPathForParameters :: (String a) => [a] -> [a] -> [a] */
+function getPathFromParameters(parameters, search) {
+	return search.map(
+		searchKeys =>	searchKeys.map(
+			s => getParameters(s, parameters)
+		)
+		.filter(isNotEmpty)
+	)
+}
+/** convertPathsToObject :: (String a) => [a] -> [b] -> [b] */
+function convertPathsToObject(paths, classTuple) {
+	return paths.map(
+		(path, i) => isNotEmpty(path) && new classTuple[i](fst(path))
+	)
+}
+/* zipWith :: (a -> b -> c) -> [a] -> [b] -> [c] */
 function zipWith(f, xs, ys) {
 	if(isEmpty(xs || isEmpty(ys))) return []
   let x = xs[0],
@@ -55,7 +81,15 @@ function zip(a,b) {
       y = b[0]
   return [[x, y]].concat(zip(a.slice(1), b.slice(1)))
 }
-function identity(x) { return x }
+/** isNotEmpty :: [a] -> Bool */
+function isNotEmpty(a) { return !isEmpty(a)}
+/** is element in array
+ *  elem :: (Eq a) => a -> [a] -> Bool */
+function elem (a, b) {
+  if(b.length === 0) return false
+  const x = b[0]
+  return a == x || elem(a, b.slice(1))
+}
 
 function postcssHandler(args) {
 	const postcssOutput = getOutputTarget(args)
@@ -125,10 +159,13 @@ function transpileFiles(target, args) {
 /**
  * utility functions
 */
+/** concat :: [a] -> [b] -> [(a,b)] */
 function concat(arr1, arr2) {
   return [...arr1, ...arr2]
 }
+/** isEmpty :: [a] -> Bool */
 function isEmpty(array) { return array.length === 0 }
+/** reject :: [a] -> [b] -> [c] */
 function reject(arr, selection) {
   return arr.filter(n => selection.indexOf(n) === -1)
 }

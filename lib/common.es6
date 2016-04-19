@@ -92,6 +92,7 @@ export {
   args,
   fst,
   snd,
+  identity,
   getParameters,
   createChild
 }
