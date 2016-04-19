@@ -1,4 +1,4 @@
-all: test/unittest/postcss.js lib/postcss.js lib/common.js
+all: test/unittest/postcss.js lib/postcss.js lib/common.js lib/composer.js
 
 test/unittest/postcss.js: test/unittest/postcss.es6
 	npm run babel -- $? --out-file $@
@@ -7,6 +7,9 @@ lib/postcss.js: lib/postcss.es6
 	npm run babel -- $< --out-file $@
 
 lib/common.js: lib/common.es6
+	npm run babel -- $< --out-file $@
+
+lib/composer.js: lib/composer.es6
 	npm run babel -- $< --out-file $@
 
 # OUT_POSTCSS := test/unittest/postcss.js lib/postcss.js 
