@@ -58,12 +58,12 @@ function getTypeFromOption(parameters) {
 
 	/* Third: composed FP */
 	const getCallType = compose(
-		searchWith,
-		callWith(getPathFromParameters, parameters),
-		callWith(convertPathsToObject, typeHandlers),
-		(x) => Array.prototype.filter.call(x, identity)
+		searchWith, // the search criteria function
+		callWith(getPathFromParameters, parameters), // get the path from the parameters
+		callWith(convertPathsToObject, typeHandlers), // get the right instance of class(!)
+		(x) => Array.prototype.filter.call(x, identity) // remove empty slots in the array
 	)
-	const CallType = getCallType(types, alternatives)
+	const CallType = getCallType(types, alternatives) // invoke the chain with the search criteria
 	
 	// console.log(new CallType[0])
 	return CallType
@@ -87,7 +87,10 @@ function getPathFromParameters(parameters, search) {
 /** convertPathsToObject :: (String a) => [a] -> [b] -> [b] */
 function convertPathsToObject(classTuple, paths) {
 	return paths.map(
-		(path, i) => isNotEmpty(path) && classTuple[i].bind(null, fst(path))
+		(path, i) => isNotEmpty(path) && { // use Monad?
+			class: classTuple[i],
+			constructorArguments: fst(path)
+		}
 	)
 }
 /* zipWith :: (a -> b -> c) -> [a] -> [b] -> [c] */

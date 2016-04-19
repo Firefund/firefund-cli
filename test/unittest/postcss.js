@@ -4,6 +4,8 @@ var _tap = require("tap");
 
 var tap = _interopRequireWildcard(_tap);
 
+var _common = require("../../lib/common");
+
 var _postcss = require("../../lib/postcss");
 
 var _path = require("path");
@@ -88,43 +90,64 @@ Sub tasks:
 function setupReplaceTest() {
 	shell.cp("-f", INPUTFILE, TEMPDIR);
 }
-// tap.test("postcss::call paths", t => {
-var actual = void 0,
-    expected = void 0;
+tap.test("postcss::call paths", function (t) {
+	t.plan(15 + 4);
 
-//const replaceInputFile = path.resolve("../temp/postcss.css")
-/**
- * format:	[-d|-o, output, input]
- * 					[-r, input]
- */
-var fileToReplace = ["-r", INPUTFILE];
-var fileToDir = ["-d", TEMPDIR, INPUTFILE];
-var fileToFile = ["-o", INPUTFILE, INPUTFILE];
-var dirToReplace = ["-r", INPUTFILE, TEMPDIR];
-var dirToDir = ["-d", TEMPDIR, TEMPDIR];
-var dirToFile = ["-o", TEMPDIR, INPUTFILE];
-var filesToReplace = ["-r", INPUTFILE, INPUTFILE];
-var filesToDir = ["-d", TEMPDIR, INPUTFILE, INPUTFILE];
-var filesToFile = ["-o", INPUTFILE, INPUTFILE, INPUTFILE];
-var mixedToReplace = ["-r", INPUTFILE, TEMPDIR];
-var mixedToDir = ["-d", TEMPDIR, INPUTFILE, TEMPDIR];
-var mixedToFile = ["-o", INPUTFILE, INPUTFILE, TEMPDIR];
-var dirsToReplace = ["-r", TEMPDIR, TEMPDIR];
-var dirsToDir = ["-d", TEMPDIR, TEMPDIR, TEMPDIR];
-var dirsToFile = ["-o", INPUTFILE, TEMPDIR, TEMPDIR];
-// fuckups
-var dirAsFile1 = ["-o", INPUTFILE];
-var dirAsFile2 = ["-o", INPUTFILE];
-var fileAsDir1 = ["-d", TEMPDIR];
-var fileAsDir2 = ["-d", TEMPDIR];
+	//const replaceInputFile = path.resolve("../temp/postcss.css")
+	/**
+  * format:	[-d|-o, output, input]
+  * 					[-r, input]
+  */
+	var fileToReplace = ["-r", INPUTFILE];
+	var fileToDir = ["-d", TEMPDIR, INPUTFILE];
+	var fileToFile = ["-o", INPUTFILE, INPUTFILE];
+	var dirToReplace = ["-r", INPUTFILE, TEMPDIR];
+	var dirToDir = ["-d", TEMPDIR, TEMPDIR];
+	var dirToFile = ["-o", TEMPDIR, INPUTFILE];
+	var filesToReplace = ["-r", INPUTFILE, INPUTFILE];
+	var filesToDir = ["-d", TEMPDIR, INPUTFILE, INPUTFILE];
+	var filesToFile = ["-o", INPUTFILE, INPUTFILE, INPUTFILE];
+	var mixedToReplace = ["-r", INPUTFILE, TEMPDIR];
+	var mixedToDir = ["-d", TEMPDIR, INPUTFILE, TEMPDIR];
+	var mixedToFile = ["-o", INPUTFILE, INPUTFILE, TEMPDIR];
+	var dirsToReplace = ["-r", TEMPDIR, TEMPDIR];
+	var dirsToDir = ["-d", TEMPDIR, TEMPDIR, TEMPDIR];
+	var dirsToFile = ["-o", INPUTFILE, TEMPDIR, TEMPDIR];
+	// fuckups
+	var dirAsFile1 = ["-o", TEMPDIR, TEMPDIR];
+	var dirAsFile2 = ["-o", TEMPDIR, INPUTFILE];
+	var fileAsDir1 = ["-d", INPUTFILE, TEMPDIR];
+	var fileAsDir2 = ["-d", TEMPDIR, INPUTFILE];
 
-/*	getTypeFromOption(fileToReplace)
-	getTypeFromOption(fileToDir)
-	getTypeFromOption(fileToFile)*/
-(0, _postcss.getTypeFromOption)(mixedToReplace);
-(0, _postcss.getTypeFromOption)(mixedToDir);
-(0, _postcss.getTypeFromOption)(mixedToFile);
-// })
+	var normalCircumstances = [fileToReplace, fileToDir, fileToFile, dirToReplace, dirToDir, dirToFile, filesToReplace, filesToDir, filesToFile, mixedToReplace, mixedToDir, mixedToFile, dirsToReplace, dirsToDir, dirsToFile];
+	var fuckedCircumstances = [dirAsFile1, dirAsFile2, fileAsDir1, fileAsDir2];
+
+	var typesMap = {
+		"-r": _postcss.Replace,
+		"-d": _postcss.Directory,
+		"-o": _postcss.File
+	};
+
+	normalCircumstances.forEach(testType);
+	fuckedCircumstances.forEach(testType);
+
+	function testType(params) {
+		/* The code is a macro for the following 3 lines
+  expected = Replace
+  actual = fst( getTypeFromOption(fileToReplace) ).class
+  t.equal(actual, expected, "should by of Replace type")
+  */
+		var expected = getType(typesMap, params[0]),
+		    actual = (0, _common.fst)((0, _postcss.getTypeFromOption)(params)).class;
+		doTest(actual, expected, expected.name);
+	}
+	function getType(types, key) {
+		return types[key];
+	}
+	function doTest(actual, expected, typeName) {
+		t.equal(actual, expected, "should by of " + typeName + " type");
+	}
+});
 
 /*tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)

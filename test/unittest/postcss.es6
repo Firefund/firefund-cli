@@ -1,7 +1,14 @@
 ﻿"use strict"
 
 import * as tap from "tap"
-import {postcssHandler, getTypeFromOption} from "../../lib/postcss"
+import {fst} from "../../lib/common"
+import {
+	postcssHandler,
+	getTypeFromOption,
+	Replace,
+	Directory,
+	File
+} from "../../lib/postcss"
 import * as path from "path"
 import * as shell from "shelljs"
 
@@ -75,8 +82,8 @@ Sub tasks:
  function setupReplaceTest() {
 	 shell.cp("-f", INPUTFILE, TEMPDIR)
  }
-// tap.test("postcss::call paths", t => {
-	let actual, expected
+tap.test("postcss::call paths", t => {
+	t.plan(15+4)
 
 	//const replaceInputFile = path.resolve("../temp/postcss.css")
 	/**
@@ -99,18 +106,49 @@ Sub tasks:
 	const dirsToDir				= ["-d", TEMPDIR, TEMPDIR, TEMPDIR]
 	const dirsToFile			= ["-o", INPUTFILE, TEMPDIR, TEMPDIR]
 	// fuckups
-	const dirAsFile1			= ["-o", INPUTFILE]
-	const dirAsFile2			= ["-o", INPUTFILE]
-	const fileAsDir1			= ["-d", TEMPDIR]
-	const fileAsDir2			= ["-d", TEMPDIR]
+	const dirAsFile1			= ["-o", TEMPDIR, TEMPDIR]
+	const dirAsFile2			= ["-o", TEMPDIR, INPUTFILE]
+	const fileAsDir1			= ["-d", INPUTFILE, TEMPDIR]
+	const fileAsDir2			= ["-d", TEMPDIR, INPUTFILE]
+
+	const normalCircumstances = [
+		fileToReplace, fileToDir, fileToFile,
+		dirToReplace, dirToDir, dirToFile,
+		filesToReplace, filesToDir, filesToFile,
+		mixedToReplace, mixedToDir, mixedToFile,
+		dirsToReplace, dirsToDir, dirsToFile
+	]
+	const fuckedCircumstances = [
+		dirAsFile1, dirAsFile2,
+		fileAsDir1, fileAsDir2
+	]
 	
-/*	getTypeFromOption(fileToReplace)
-	getTypeFromOption(fileToDir)
-	getTypeFromOption(fileToFile)*/
-	getTypeFromOption(mixedToReplace)
-	getTypeFromOption(mixedToDir)
-	getTypeFromOption(mixedToFile)
-// })
+	const typesMap = {
+		"-r": Replace,
+		"-d": Directory,
+		"-o": File
+	}
+	
+	normalCircumstances.forEach(testType)
+	fuckedCircumstances.forEach(testType)
+	
+	function testType(params)	{
+		/* The code is a macro for the following 3 lines
+		expected = Replace
+		actual = fst( getTypeFromOption(fileToReplace) ).class
+		t.equal(actual, expected, "should by of Replace type")
+		*/
+		const expected = getType(typesMap, params[0]),
+					actual = fst( getTypeFromOption(params) ).class
+		doTest(actual, expected, expected.name)
+	}
+	function getType(types, key) {
+		return types[key]
+	}
+	function doTest(actual, expected, typeName) {
+		t.equal(actual, expected, `should by of ${typeName} type`)
+	}
+})
  
 /*tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)
