@@ -14,6 +14,31 @@ import * as shell from "shelljs"
 
 const INPUTFILE = path.resolve(__dirname, "../fixtures/folder1/postcss.css")
 const TEMPDIR = path.resolve(__dirname, "../temp/")
+/** Input combinations
+ * format:	[-d|-o, output, input]
+ * 					[-r, input]
+ */
+const fileToReplace		= ["-r", INPUTFILE]
+const fileToDir				= ["-d", TEMPDIR, INPUTFILE]
+const fileToFile			= ["-o", INPUTFILE, INPUTFILE]
+const dirToReplace		= ["-r", INPUTFILE, TEMPDIR]
+const dirToDir				= ["-d", TEMPDIR, TEMPDIR]
+const dirToFile				= ["-o", TEMPDIR, INPUTFILE]
+const filesToReplace	= ["-r", INPUTFILE, INPUTFILE]
+const filesToDir			= ["-d", TEMPDIR, INPUTFILE, INPUTFILE]
+const filesToFile			= ["-o", INPUTFILE, INPUTFILE, INPUTFILE]
+const mixedToReplace	= ["-r", INPUTFILE, TEMPDIR]
+const mixedToDir			= ["-d", TEMPDIR, INPUTFILE, TEMPDIR]
+const mixedToFile			= ["-o", INPUTFILE, INPUTFILE, TEMPDIR]
+const dirsToReplace		= ["-r", TEMPDIR, TEMPDIR]
+const dirsToDir				= ["-d", TEMPDIR, TEMPDIR, TEMPDIR]
+const dirsToFile			= ["-o", INPUTFILE, TEMPDIR, TEMPDIR]
+// fuckups
+const dirAsFile1			= ["-o", TEMPDIR, TEMPDIR]
+const dirAsFile2			= ["-o", TEMPDIR, INPUTFILE]
+const fileAsDir1			= ["-d", INPUTFILE, TEMPDIR]
+const fileAsDir2			= ["-d", TEMPDIR, INPUTFILE]
+
 const getOutputFile = (function getOutputFile() {
 	let counter = 0
 	return () => counter++
@@ -82,35 +107,10 @@ Sub tasks:
  function setupReplaceTest() {
 	 shell.cp("-f", INPUTFILE, TEMPDIR)
  }
-tap.test("postcss::call paths", t => {
+tap.test("postcss::return correct type handler for input", t => {
 	t.plan(15+4)
 
 	//const replaceInputFile = path.resolve("../temp/postcss.css")
-	/**
-	 * format:	[-d|-o, output, input]
-	 * 					[-r, input]
-	 */
-	const fileToReplace		= ["-r", INPUTFILE]
-	const fileToDir				= ["-d", TEMPDIR, INPUTFILE]
-	const fileToFile			= ["-o", INPUTFILE, INPUTFILE]
-	const dirToReplace		= ["-r", INPUTFILE, TEMPDIR]
-	const dirToDir				= ["-d", TEMPDIR, TEMPDIR]
-	const dirToFile				= ["-o", TEMPDIR, INPUTFILE]
-	const filesToReplace	= ["-r", INPUTFILE, INPUTFILE]
-	const filesToDir			= ["-d", TEMPDIR, INPUTFILE, INPUTFILE]
-	const filesToFile			= ["-o", INPUTFILE, INPUTFILE, INPUTFILE]
-	const mixedToReplace	= ["-r", INPUTFILE, TEMPDIR]
-	const mixedToDir			= ["-d", TEMPDIR, INPUTFILE, TEMPDIR]
-	const mixedToFile			= ["-o", INPUTFILE, INPUTFILE, TEMPDIR]
-	const dirsToReplace		= ["-r", TEMPDIR, TEMPDIR]
-	const dirsToDir				= ["-d", TEMPDIR, TEMPDIR, TEMPDIR]
-	const dirsToFile			= ["-o", INPUTFILE, TEMPDIR, TEMPDIR]
-	// fuckups
-	const dirAsFile1			= ["-o", TEMPDIR, TEMPDIR]
-	const dirAsFile2			= ["-o", TEMPDIR, INPUTFILE]
-	const fileAsDir1			= ["-d", INPUTFILE, TEMPDIR]
-	const fileAsDir2			= ["-d", TEMPDIR, INPUTFILE]
-
 	const normalCircumstances = [
 		fileToReplace, fileToDir, fileToFile,
 		dirToReplace, dirToDir, dirToFile,

@@ -132,6 +132,7 @@ tap.test("postcss::call paths", function (t) {
 	fuckedCircumstances.forEach(testType);
 
 	function testType(params) {
+		console.time("typeName");
 		/* The code is a macro for the following 3 lines
   expected = Replace
   actual = fst( getTypeFromOption(fileToReplace) ).class
@@ -146,6 +147,7 @@ tap.test("postcss::call paths", function (t) {
 	}
 	function doTest(actual, expected, typeName) {
 		t.equal(actual, expected, "should by of " + typeName + " type");
+		console.timeEnd("typeName");
 	}
 });
 
