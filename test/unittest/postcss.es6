@@ -105,8 +105,8 @@ Sub tasks:
 	const fileAsDir2			= ["-d", TEMPDIR]
 	
 	callPath(fileToReplace)
-	callPath(fileToDir)
-	callPath(fileToFile)
+	// callPath(fileToDir)
+	// callPath(fileToFile)
 // })
  
 /*tap.test("css::transpile postcss file to css", t => {

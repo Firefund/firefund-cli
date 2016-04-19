@@ -10,15 +10,21 @@ export {
 	callPath
 }
 
+const typeHandlers = [
+	class Replace {
+		
+	},
+	class Directory {},
+	class File {}
+]
+
 const eventEmitter = new EventEmitter()
 
 function callPath(args) {
 	const types = ["-r","-d","-o"]
 	const alternatives = ["--replace","--dir","--output"]
-	const callTypes = zip(types, alternatives).map(flags => flags
-		.map(flag => getParameters(flag))
-		/*.map()
-		.filter(x => x)*/
+	const callTypes = zip(types, alternatives).map(
+		flags => flags// flags.map(flag => getParameters(flag, args)).filter(x => x.length)
 	)
 	console.log(callTypes)
 }
