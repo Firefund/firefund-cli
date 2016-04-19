@@ -104,7 +104,7 @@ Sub tasks:
 	const fileAsDir1			= ["-d", TEMPDIR]
 	const fileAsDir2			= ["-d", TEMPDIR]
 	
-	callPath(fileToReplace)
+	callPath(fileToReplace) 
 	// callPath(fileToDir)
 	// callPath(fileToFile)
 // })
