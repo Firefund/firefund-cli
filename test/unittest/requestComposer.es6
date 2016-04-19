@@ -1,7 +1,7 @@
 "use strict";
 
-import tap from "tap"
-import composer from "../../lib/composer"
+import * as tap from "tap"
+import {composeListeners as composer} from "../../lib/composer"
 
 tap.test("Composed functions", function (t) {
   let actual, expected

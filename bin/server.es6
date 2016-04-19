@@ -7,7 +7,7 @@
  ******************************************************************* */
 
 import * as c from "../lib/common"
-import composeListeners from "../lib/composer"
+import {composeListeners} from "../lib/composer"
 import * as path from "path"
 import ecstatic from "ecstatic" // ecstatic exports in a very unusual way
 import * as livereload from "livereload"

@@ -12,6 +12,7 @@ function timer(fn) {
 	return setTimeout(fn, 100)
 }
 
+/* TODO: when lib/postcss is done
 tap.test("css::transpile postcss file to css", t => {
 	t.plan(2)
 	
@@ -32,10 +33,10 @@ tap.test("css::transpile postcss file to css", t => {
 					expected = true
 		let timerId
 		
-		t.equal(code, 0, "bin/css should exit clean")
+		t.equal(code, 0, "bin/css should exit clean", { todo:"TODO: when lib/postcss is done" })
 
 		checkFile(filePath, actual => {
-			t.equal(actual, expected, "test/temp.css should exist")
+			t.equal(actual, expected, "test/temp.css should exist", { todo:"TODO: when lib/postcss is done" })
 
 			// cleanup
 			if(shell.test("-e", filePath)) shell.rm(filePath)
@@ -62,4 +63,4 @@ tap.test("css::transpile postcss file to css", t => {
 tap.test("css::transpile directory to new location while keeping directory structure", t => {
 	let actual, expected
 	t.end()
-})
+})*/

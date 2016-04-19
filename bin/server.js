@@ -13,8 +13,6 @@ var c = _interopRequireWildcard(_common);
 
 var _composer = require("../lib/composer");
 
-var _composer2 = _interopRequireDefault(_composer);
-
 var _path = require("path");
 
 var path = _interopRequireWildcard(_path);
@@ -48,7 +46,7 @@ if (!rootPath) c.errorOut("Root path for ecstatic is required as first argument"
 
 if (!watchPath) c.errorOut("Watch path for livereload is required as second argument");
 
-var listeners = (0, _composer2.default)(logPath, setupEcstatic());
+var listeners = (0, _composer.composeListeners)(logPath, setupEcstatic());
 http.createServer(listeners).listen(8080);
 
 server.watch(path.resolve(dirroot, watchPath));

@@ -2,15 +2,13 @@
 
 var _tap = require("tap");
 
-var _tap2 = _interopRequireDefault(_tap);
+var tap = _interopRequireWildcard(_tap);
 
 var _composer = require("../../lib/composer");
 
-var _composer2 = _interopRequireDefault(_composer);
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_tap2.default.test("Composed functions", function (t) {
+tap.test("Composed functions", function (t) {
   var actual = void 0,
       expected = void 0;
   var timesListenersAreCalled = 0;
@@ -20,7 +18,7 @@ _tap2.default.test("Composed functions", function (t) {
   expected = "fake";
 
   // register listeners
-  var listeners = (0, _composer2.default)(listener, listener);
+  var listeners = (0, _composer.composeListeners)(listener, listener);
   // call listeners with object
   listeners({
     url: "fake"
