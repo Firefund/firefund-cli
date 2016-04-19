@@ -1,7 +1,7 @@
 ﻿"use strict"
 
 import * as tap from "tap"
-import {postcssHandler, callPath} from "../../lib/postcss"
+import {postcssHandler, getTypeFromOption} from "../../lib/postcss"
 import * as path from "path"
 import * as shell from "shelljs"
 
@@ -104,12 +104,12 @@ Sub tasks:
 	const fileAsDir1			= ["-d", TEMPDIR]
 	const fileAsDir2			= ["-d", TEMPDIR]
 	
-/*	callPath(fileToReplace)
-	callPath(fileToDir)
-	callPath(fileToFile)*/
-	callPath(mixedToReplace)
-	callPath(mixedToDir)
-	callPath(mixedToFile)
+/*	getTypeFromOption(fileToReplace)
+	getTypeFromOption(fileToDir)
+	getTypeFromOption(fileToFile)*/
+	getTypeFromOption(mixedToReplace)
+	getTypeFromOption(mixedToDir)
+	getTypeFromOption(mixedToFile)
 // })
  
 /*tap.test("css::transpile postcss file to css", t => {

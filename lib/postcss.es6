@@ -6,48 +6,57 @@ import * as shell from "shelljs"
 import {EventEmitter} from "events"
 import * as path from "path"
 
-export {
-	postcssHandler,
-	callPath
+class Replace {
+	constructor(output) {
+		console.log("Replace", output)
+		const path = fst(output)
+		if( shell.test("-d", path) ) throw new Error("Not implemented by postcss-cli")
+	}
+}
+class Directory {
+	constructor(output) {
+		console.log("Directory", output)
+	}
+}
+class File {
+	constructor(output) {
+		console.log("File", output)
+	}
 }
 
-const typeHandlers = [
-	class Replace {
-		constructor(output) {
-			console.log("Replace", output)
-			const path = fst(output)
-			if( shell.test("-d", path) ) throw new Error("Not implemented by postcss-cli")
-		}
-	},
-	class Directory {
-		constructor(output) {
-			console.log("Directory", output)
-		}
-	},
-	class File {
-		constructor(output) {
-			console.log("File", output)
-		}
-	}
-]
+export {
+	postcssHandler,
+	getTypeFromOption,
+	Replace,
+	Directory,
+	File
+}
+
+const typeHandlers = [Replace, Directory, File]
 
 const eventEmitter = new EventEmitter()
 
-function callPath(parameters) {
+function getTypeFromOption(parameters) {
 	const types = ["-r","-d","-o"]
 	const alternatives = ["--replace","--dir","--output"]
-/*const callTypes = zip(types, alternatives).map(
+/* First: procedural FP */
+	/*const CallType = zip(types, alternatives).map(
 		flags => 
 			flags
-				.map( flag => getParameters(flag, args) )
+				.map( flag => getParameters(flag, parameters) )
 				.filter( isNotEmpty )		
-	).map( (path, i, all) => path.length ? new typeHandlers[i](fst(path)) : null )*/
+	).map( (path, i, all) => path.length ? typeHandlers[i].bind(null, fst(path)) : null )
+	.filter(identity)*/
+	
+	/* Second: Convoluted FP */
 	/*const CallType = convertPathsToObject(
 		typeHandlers,
 		getPathFromParameters(
 			parameters, searchWith(types, alternatives)
 		)		
 	).filter(identity)*/
+
+	/* Third: composed FP */
 	const getCallType = compose(
 		searchWith,
 		callWith(getPathFromParameters, parameters),
@@ -56,9 +65,8 @@ function callPath(parameters) {
 	)
 	const CallType = getCallType(types, alternatives)
 	
-	
-	
-	console.log(new CallType[0])
+	// console.log(new CallType[0])
+	return CallType
 }
 /** searchWith :: [a] -> [b] -> [c] */
 function searchWith(a,b) { return zip(a,b) }
