@@ -5,3 +5,7 @@ language: node_js
 node_js:
   - "stable"
   - "4.4"
+# travis cache
+cache:
+  directories:
+  - node_modules
