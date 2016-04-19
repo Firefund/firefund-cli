@@ -12,10 +12,16 @@ export {
 
 const typeHandlers = [
 	class Replace {
-		
+		constructor(output) {
+			
+		}
 	},
-	class Directory {},
-	class File {}
+	class Directory {
+		constructor(output) {}
+	},
+	class File {
+		constructor(output) {}
+	}
 ]
 
 const eventEmitter = new EventEmitter()
@@ -24,8 +30,14 @@ function callPath(args) {
 	const types = ["-r","-d","-o"]
 	const alternatives = ["--replace","--dir","--output"]
 	const callTypes = zip(types, alternatives).map(
-		flags => flags// flags.map(flag => getParameters(flag, args)).filter(x => x.length)
-	)
+		flags => fst(
+			flags
+				.map( flag => getParameters(flag, args) )
+			//	.filter( identity )
+		)
+//	.filter( identity )
+	).map( (path, i, all) => path.length ? new typeHandlers[i](fst(path)) : null )
+	
 	console.log(callTypes)
 }
 function zipWith(f, xs, ys) {
@@ -43,6 +55,7 @@ function zip(a,b) {
       y = b[0]
   return [[x, y]].concat(zip(a.slice(1), b.slice(1)))
 }
+function identity(x) { return x }
 
 function postcssHandler(args) {
 	const postcssOutput = getOutputTarget(args)
