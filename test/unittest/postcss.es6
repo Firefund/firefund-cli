@@ -21,7 +21,7 @@ const TEMPDIR = path.resolve(__dirname, "../temp/")
 const fileToReplace		= ["-r", INPUTFILE]
 const fileToDir				= ["-d", TEMPDIR, INPUTFILE]
 const fileToFile			= ["-o", INPUTFILE, INPUTFILE]
-const dirToReplace		= ["-r", INPUTFILE, TEMPDIR]
+const dirToReplace		= ["-r", TEMPDIR]
 const dirToDir				= ["-d", TEMPDIR, TEMPDIR]
 const dirToFile				= ["-o", TEMPDIR, INPUTFILE]
 const filesToReplace	= ["-r", INPUTFILE, INPUTFILE]
@@ -105,10 +105,11 @@ Sub tasks:
  [5] - `throw new Error("Not implemented by postcss-cli")`
  **/
  function setupReplaceTest() {
-	 shell.cp("-f", INPUTFILE, TEMPDIR)
+	 shell.mkdir("-p", TEMPDIR)
+	 shell.cp("-f", INPUTFILE, path.resolve(TEMPDIR, INPUTFILE))
  }
 tap.test("postcss::return correct type handler for input", t => {
-	t.plan(15+4)
+	t.plan(15 + 4)
 
 	//const replaceInputFile = path.resolve("../temp/postcss.css")
 	const normalCircumstances = [
@@ -146,10 +147,18 @@ tap.test("postcss::return correct type handler for input", t => {
 		return types[key]
 	}
 	function doTest(actual, expected, typeName) {
-		t.equal(actual, expected, `should by of ${typeName} type`)
+		t.equal(actual, expected, `should be of ${typeName} type`)
 	}
 })
- 
+
+tap.test("css::throw errors", t => {
+	t.plan(1)
+	setupReplaceTest()
+	let replace = new Replace(dirToReplace.slice(1))
+	let actual = replace.validate,
+			expected = new Error("Not implemented by postcss-clip")
+	t.throws(actual, expected, "should error that directories cannot be replaced")
+})
 /*tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)
 	

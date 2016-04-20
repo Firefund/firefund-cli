@@ -20,6 +20,31 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var INPUTFILE = path.resolve(__dirname, "../fixtures/folder1/postcss.css");
 var TEMPDIR = path.resolve(__dirname, "../temp/");
+/** Input combinations
+ * format:	[-d|-o, output, input]
+ * 					[-r, input]
+ */
+var fileToReplace = ["-r", INPUTFILE];
+var fileToDir = ["-d", TEMPDIR, INPUTFILE];
+var fileToFile = ["-o", INPUTFILE, INPUTFILE];
+var dirToReplace = ["-r", TEMPDIR];
+var dirToDir = ["-d", TEMPDIR, TEMPDIR];
+var dirToFile = ["-o", TEMPDIR, INPUTFILE];
+var filesToReplace = ["-r", INPUTFILE, INPUTFILE];
+var filesToDir = ["-d", TEMPDIR, INPUTFILE, INPUTFILE];
+var filesToFile = ["-o", INPUTFILE, INPUTFILE, INPUTFILE];
+var mixedToReplace = ["-r", INPUTFILE, TEMPDIR];
+var mixedToDir = ["-d", TEMPDIR, INPUTFILE, TEMPDIR];
+var mixedToFile = ["-o", INPUTFILE, INPUTFILE, TEMPDIR];
+var dirsToReplace = ["-r", TEMPDIR, TEMPDIR];
+var dirsToDir = ["-d", TEMPDIR, TEMPDIR, TEMPDIR];
+var dirsToFile = ["-o", INPUTFILE, TEMPDIR, TEMPDIR];
+// fuckups
+var dirAsFile1 = ["-o", TEMPDIR, TEMPDIR];
+var dirAsFile2 = ["-o", TEMPDIR, INPUTFILE];
+var fileAsDir1 = ["-d", INPUTFILE, TEMPDIR];
+var fileAsDir2 = ["-d", TEMPDIR, INPUTFILE];
+
 var getOutputFile = function getOutputFile() {
 	var counter = 0;
 	return function () {
@@ -88,37 +113,13 @@ Sub tasks:
  [5] - `throw new Error("Not implemented by postcss-cli")`
  **/
 function setupReplaceTest() {
-	shell.cp("-f", INPUTFILE, TEMPDIR);
+	shell.mkdir("-p", TEMPDIR);
+	shell.cp("-f", INPUTFILE, path.resolve(TEMPDIR, INPUTFILE));
 }
-tap.test("postcss::call paths", function (t) {
+tap.test("postcss::return correct type handler for input", function (t) {
 	t.plan(15 + 4);
 
 	//const replaceInputFile = path.resolve("../temp/postcss.css")
-	/**
-  * format:	[-d|-o, output, input]
-  * 					[-r, input]
-  */
-	var fileToReplace = ["-r", INPUTFILE];
-	var fileToDir = ["-d", TEMPDIR, INPUTFILE];
-	var fileToFile = ["-o", INPUTFILE, INPUTFILE];
-	var dirToReplace = ["-r", INPUTFILE, TEMPDIR];
-	var dirToDir = ["-d", TEMPDIR, TEMPDIR];
-	var dirToFile = ["-o", TEMPDIR, INPUTFILE];
-	var filesToReplace = ["-r", INPUTFILE, INPUTFILE];
-	var filesToDir = ["-d", TEMPDIR, INPUTFILE, INPUTFILE];
-	var filesToFile = ["-o", INPUTFILE, INPUTFILE, INPUTFILE];
-	var mixedToReplace = ["-r", INPUTFILE, TEMPDIR];
-	var mixedToDir = ["-d", TEMPDIR, INPUTFILE, TEMPDIR];
-	var mixedToFile = ["-o", INPUTFILE, INPUTFILE, TEMPDIR];
-	var dirsToReplace = ["-r", TEMPDIR, TEMPDIR];
-	var dirsToDir = ["-d", TEMPDIR, TEMPDIR, TEMPDIR];
-	var dirsToFile = ["-o", INPUTFILE, TEMPDIR, TEMPDIR];
-	// fuckups
-	var dirAsFile1 = ["-o", TEMPDIR, TEMPDIR];
-	var dirAsFile2 = ["-o", TEMPDIR, INPUTFILE];
-	var fileAsDir1 = ["-d", INPUTFILE, TEMPDIR];
-	var fileAsDir2 = ["-d", TEMPDIR, INPUTFILE];
-
 	var normalCircumstances = [fileToReplace, fileToDir, fileToFile, dirToReplace, dirToDir, dirToFile, filesToReplace, filesToDir, filesToFile, mixedToReplace, mixedToDir, mixedToFile, dirsToReplace, dirsToDir, dirsToFile];
 	var fuckedCircumstances = [dirAsFile1, dirAsFile2, fileAsDir1, fileAsDir2];
 
@@ -132,7 +133,6 @@ tap.test("postcss::call paths", function (t) {
 	fuckedCircumstances.forEach(testType);
 
 	function testType(params) {
-		console.time("typeName");
 		/* The code is a macro for the following 3 lines
   expected = Replace
   actual = fst( getTypeFromOption(fileToReplace) ).class
@@ -146,11 +146,18 @@ tap.test("postcss::call paths", function (t) {
 		return types[key];
 	}
 	function doTest(actual, expected, typeName) {
-		t.equal(actual, expected, "should by of " + typeName + " type");
-		console.timeEnd("typeName");
+		t.equal(actual, expected, "should be of " + typeName + " type");
 	}
 });
 
+tap.test("css::throw errors", function (t) {
+	t.plan(1);
+	setupReplaceTest();
+	var replace = new _postcss.Replace(dirToReplace.slice(1));
+	var actual = replace.validate.bind(replace),
+	    expected = new Error("Not implemented by postcss-clip");
+	t.throws(actual, expected, "should error that directories cannot be replaced");
+});
 /*tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)
 	

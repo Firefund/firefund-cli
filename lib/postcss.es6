@@ -7,14 +7,16 @@ import {EventEmitter} from "events"
 import * as path from "path"
 
 class Replace {
-	constructor(output) {
-		console.log("Replace", output)
-		const path = fst(output)
-		if( shell.test("-d", path) ) throw new Error("Not implemented by postcss-cli")
+	constructor(io) {
+		// console.log("Replace", io)
+		this.input = path.resolve(__dirname, fst(io))		
+	}
+	validate() {
+		if( shell.test("-d", this.input) ) throw new Error("Not implemented by postcss-clip")
 	}
 }
 class Directory {
-	constructor(output) {
+	constructor(outp) {
 		console.log("Directory", output)
 	}
 }
