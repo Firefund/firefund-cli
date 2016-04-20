@@ -151,7 +151,7 @@ tap.test("postcss::return correct type handler for input", function (t) {
 });
 
 tap.test("css::throw errors", function (t) {
-	t.plan(2);
+	t.plan(3);
 	setupReplaceTest();
 
 	var replace = new _postcss.Replace(dirToReplace.slice(1));
@@ -160,6 +160,10 @@ tap.test("css::throw errors", function (t) {
 	t.throws(actual, expected, "should error that directories cannot be replaced");
 
 	replace = new _postcss.Replace(mixedToReplace.slice(1));
+	actual = replace.validate.bind(replace), expected = new Error("Not implemented by postcss-clip");
+	t.throws(actual, expected, "should error that directories cannot be replaced");
+
+	replace = new _postcss.Replace(dirsToReplace.slice(1));
 	actual = replace.validate.bind(replace), expected = new Error("Not implemented by postcss-clip");
 	t.throws(actual, expected, "should error that directories cannot be replaced");
 });

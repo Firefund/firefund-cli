@@ -152,7 +152,7 @@ tap.test("postcss::return correct type handler for input", t => {
 })
 
 tap.test("css::throw errors", t => {
-	t.plan(2)
+	t.plan(3)
 	setupReplaceTest()
 
 	let replace = new Replace(dirToReplace.slice(1))
@@ -161,6 +161,11 @@ tap.test("css::throw errors", t => {
 	t.throws(actual, expected, "should error that directories cannot be replaced")
 	
 	replace = new Replace(mixedToReplace.slice(1))
+	actual = replace.validate.bind(replace),
+	expected = new Error("Not implemented by postcss-clip")
+	t.throws(actual, expected, "should error that directories cannot be replaced")
+	
+	replace = new Replace(dirsToReplace.slice(1))
 	actual = replace.validate.bind(replace),
 	expected = new Error("Not implemented by postcss-clip")
 	t.throws(actual, expected, "should error that directories cannot be replaced")
