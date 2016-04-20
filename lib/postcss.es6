@@ -9,10 +9,14 @@ import * as path from "path"
 class Replace {
 	constructor(io) {
 		// console.log("Replace", io)
-		this.input = path.resolve(__dirname, fst(io))		
+		this.input = io.map(p =>
+			path.resolve(__dirname, p)
+		)		
 	}
 	validate() {
-		if( shell.test("-d", this.input) ) throw new Error("Not implemented by postcss-clip")
+		this.input.forEach(input => {
+			if( shell.test("-d", input) ) throw new Error("Not implemented by postcss-clip")
+		})
 	}
 }
 class Directory {
