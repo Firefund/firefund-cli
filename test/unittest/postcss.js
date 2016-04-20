@@ -151,7 +151,7 @@ tap.test("postcss::return correct type handler for input", function (t) {
 });
 
 tap.test("css::throw errors", function (t) {
-	t.plan(3);
+	t.plan(4);
 	setupReplaceTest();
 
 	var replace = new _postcss.Replace(dirToReplace.slice(1));
@@ -166,6 +166,11 @@ tap.test("css::throw errors", function (t) {
 	replace = new _postcss.Replace(dirsToReplace.slice(1));
 	actual = replace.validate.bind(replace), expected = new Error("Not implemented by postcss-clip");
 	t.throws(actual, expected, "should error that directories cannot be replaced");
+
+	var file = new _postcss.File(dirToFile.slice(1));
+	actual = file.validate.bind(file);
+	expected = new Error("Can not transpile a directory to a file - yet");
+	t.throws(actual, expected, "should error that we don't support directory to file");
 });
 /*tap.test("css::transpile postcss file to css", t => {
 	t.plan(1)

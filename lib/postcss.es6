@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-import {getParameters, createChild, args, fst, identity, isEmpty, isNotEmpty} from "../lib/common"
+import {getParameters, createChild, args, fst, snd, identity, isEmpty, isNotEmpty} from "../lib/common"
 import {compose} from "../lib/composer"
 import * as shell from "shelljs"
 import {EventEmitter} from "events"
@@ -20,13 +20,30 @@ class Replace {
 	}
 }
 class Directory {
-	constructor(outp) {
-		console.log("Directory", output)
+	constructor(io) {
+		//console.log("Directory", output)
+		this.input = io.map(p => 
+			path.resolve(__dirname, p)
+		)
+	}
+	validate() {
+		this.input.forEach({
+			
+		})
 	}
 }
 class File {
-	constructor(output) {
-		console.log("File", output)
+	constructor(io) {
+		console.log("File", io)
+		this.input = io.map(p => 
+			path.resolve(__dirname, p)
+		)
+	}
+	validate() {
+		// TODO: wrong order of this.input - fix by changing convertPathsToObject.constructorArguments
+		const input = fst(this.input)
+		const output = snd(this.input)
+		if( shell.test("-f", input) && shell.test("-d", output) ) throw new Error("Can not transpile a directory to a file - yet")  
 	}
 }
 
