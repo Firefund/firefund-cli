@@ -80,32 +80,45 @@ function getTypeFromOption(parameters) {
 	).filter(identity)*/
 
 	/* Third: composed FP */
-	const getCallType = compose(
-		searchWith, // the search criteria function
-		callWith(getPathFromParameters, parameters), // get the path from the parameters
-		callWith(convertPathsToObject, typeHandlers), // get the right instance of class(!)
-		(x) => Array.prototype.filter.call(x, identity) // remove empty slots in the array
-	)
-	const CallType = getCallType(types, alternatives) // invoke the chain with the search criteria
-	
+	// const getCallType = compose(
+	// 	searchWith, // the search criteria function
+	// 	bind(getPathFromParameters, parameters), // get the path from the parameters
+	// 	bind(convertPathsToObject, typeHandlers), // get the right instance of class(!)
+	// 	(x) => Array.prototype.filter.call(x, identity) // remove empty slots in the array
+	// )
+	// const CallType = getCallType(types, alternatives) // invoke the chain with the search criteria
 	// console.log(new CallType[0])
-	return CallType
+	//return CallType
+	const searchFlags =  zip(types, alternatives)
+	const output = isEmpty(
+		searchFlags.map(
+			bind(getParameters, parameters)
+		)
+	)
+	let j = map( bind(getParameters, parameters) )(searchFlags)
+	console.log("out",output)
+	console.log("j", j)
+}
+function map(fn) {
+	return  (array) => Array.prototype.map.bind(array, fn)
 }
 /** searchWith :: [a] -> [b] -> [c] */
 function searchWith(a,b) { return zip(a,b) }
-/** callWith :: [a] -> [b] -> M(a) */
-function callWith(fn, ...a) {
+/** bind :: [a] -> [b] -> M(a) */
+function bind(fn, ...a) {
 	// it seems that a bug in babel scoping prevents us from using 'args' as named argument
 	return fn.bind(null, ...a)
 }
 /** getPathForParameters :: (String a) => [a] -> [a] -> [a] */
 function getPathFromParameters(parameters, search) {
-	return search.map(
+	const output = search.map(
 		searchKeys =>	searchKeys.map(
 			s => getParameters(s, parameters)
 		)
 		.filter(isNotEmpty)
 	)
+	const input = getInputTarget(parameters, flatten(output.concat(search)))
+	return { input,	output }
 }
 /** convertPathsToObject :: (String a) => [a] -> [b] -> [b] */
 function convertPathsToObject(classTuple, paths) {
@@ -114,6 +127,18 @@ function convertPathsToObject(classTuple, paths) {
 			class: classTuple[i],
 			constructorArguments: fst(path)
 		}
+	)
+}
+/** tco */
+function foldl(fn, terminalValue, [first, ...rest]) { 
+  return first === void 0
+   ? terminalValue
+   : foldl(fn, fn(terminalValue, first), rest)
+}
+function flatten(list) {
+	return foldl((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b)
+		, []
+		, list	
 	)
 }
 /* zipWith :: (a -> b -> c) -> [a] -> [b] -> [c] */
@@ -125,7 +150,11 @@ function zipWith(f, xs, ys) {
   ys = ys.slice(1)
   return [f(x, y)].concat(zipWith(f, xs, ys))
 }
-/* zip :: [a] -> [b] -> [(a, b)] */
+/** zip :: [a] -> [b] -> [(a, b)]
+ * @param {array} a
+ * @param {array} b
+ * @return {array[]} [(a, b)]
+*/
 function zip(a,b) {
   if(isEmpty(a || isEmpty(b))) return []
   let x = a[0],
@@ -142,8 +171,11 @@ function elem (a, b) {
 }
 
 function postcssHandler(args) {
-	const postcssOutput = getOutputTarget(args)
-	const postcssInput = getInputTarget(args, postcssOutput)
+	const types = ["-r","-d","-o"]
+	const alternatives = ["--replace","--dir","--output"]
+	const search =  zip(types, alternatives)
+	const postcssOutput = getOutputTarget(args, search)
+	const postcssInput = getInputTarget(args, postcssOutput.concat(search))
 
 //TODO: remove debug stuff
 console.warn(postcssInput)
@@ -153,26 +185,22 @@ console.warn(postcssOutput)
 
   postcssInput.forEach(input => {
     if(isDir(input)) transpileDir(input)
-	  else transpileFiles(input, fst(postcssOutput), args)
+	  else transpileFiled(input, fst(postcssOutput), args)
   })
   
   return eventEmitter
 }
-function getOutputTarget(args) {
-  return concat(
-    concat(
-      getParameters("-o", args),
-      getParameters("--output", args)
-    ),
-    concat(
-      getParameters("-d", args),
-      getParameters("--dir", args)
-    )
-  )
+function getOutputTarget(parameters, search) {
+  return search.map(
+		searchKeys =>	searchKeys.map(
+			s => getParameters(s, parameters)
+		)
+		.filter(isNotEmpty)
+	)
 }
-function getInputTarget(args, outputTarget) {
-  const postcssInput = reject(args, outputTarget.concat(["-o", "--output", "-d", "-dir"]))
-	if(isEmpty(postcssInput)) postcssInput.concat(args.slice(-1))
+function getInputTarget(parameters, outputTarget) {
+  const postcssInput = reject(parameters, outputTarget)
+	if(isEmpty(postcssInput)) postcssInput.concat(parameters.slice(-1))
 	return postcssInput
 }
 function isDir(target) {

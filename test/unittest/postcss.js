@@ -44,6 +44,9 @@ var dirAsFile1 = ["-o", TEMPDIR, TEMPDIR];
 var dirAsFile2 = ["-o", TEMPDIR, INPUTFILE];
 var fileAsDir1 = ["-d", INPUTFILE, TEMPDIR];
 var fileAsDir2 = ["-d", TEMPDIR, INPUTFILE];
+// no flags
+var filesToStdout = [INPUTFILE, INPUTFILE, INPUTFILE]; //[1]
+var mixedToStdout = [INPUTFILE, TEMPDIR, INPUTFILE]; //[5]
 
 var getOutputFile = function getOutputFile() {
 	var counter = 0;
@@ -71,6 +74,7 @@ Sub tasks:
 - [ ] file and file to file, pass on to postcss (postscss will error)
 - [ ] file and directory to file, pass on to postcss (postscss will error)
 - [ ] directory and directory to file, pass on to postcss (postscss will error)
+- [ ] pass files without flag to stdout via postcss
 
 ### argument combinations to postcss
 
@@ -102,6 +106,9 @@ Sub tasks:
 17. `--output outputDir inputFile ` [4]
 18. `--dir outputFile intputDir` [4]
 19. `--dir outputFile intputFile` [4]
+
+20. `inputFile inputFile ...` [1]
+21. `inputFile inputDir ...` [5]
 
 ### ACTIONS:
 

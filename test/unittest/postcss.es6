@@ -38,6 +38,9 @@ const dirAsFile1			= ["-o", TEMPDIR, TEMPDIR]
 const dirAsFile2			= ["-o", TEMPDIR, INPUTFILE]
 const fileAsDir1			= ["-d", INPUTFILE, TEMPDIR]
 const fileAsDir2			= ["-d", TEMPDIR, INPUTFILE]
+// no flags
+const filesToStdout		= [INPUTFILE, INPUTFILE, INPUTFILE] //[1]
+const mixedToStdout		= [INPUTFILE, TEMPDIR, INPUTFILE] //[5]
 
 const getOutputFile = (function getOutputFile() {
 	let counter = 0
@@ -63,6 +66,7 @@ Sub tasks:
 - [ ] file and file to file, pass on to postcss (postscss will error)
 - [ ] file and directory to file, pass on to postcss (postscss will error)
 - [ ] directory and directory to file, pass on to postcss (postscss will error)
+- [ ] pass files without flag to stdout via postcss
 
 ### argument combinations to postcss
 
@@ -94,6 +98,9 @@ Sub tasks:
 17. `--output outputDir inputFile ` [4]
 18. `--dir outputFile intputDir` [4]
 19. `--dir outputFile intputFile` [4]
+
+20. `inputFile inputFile ...` [1]
+21. `inputFile inputDir ...` [5]
 
 ### ACTIONS:
 

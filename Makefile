@@ -1,4 +1,7 @@
-all: test/unittest/postcss.js lib/postcss.js lib/common.js lib/composer.js
+all: getTypeFromOption.es6 test/unittest/postcss.js lib/postcss.js lib/common.js lib/composer.js
+
+getTypeFromOption.js: getTypeFromOption.es6
+	npm run babel -- $? --out-file $@ 
 
 test/unittest/postcss.js: test/unittest/postcss.es6
 	npm run babel -- $? --out-file $@
