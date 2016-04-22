@@ -2,6 +2,7 @@
 
 import {getParameters, createChild, args, fst, snd, identity, isEmpty, isNotEmpty} from "../lib/common"
 import {compose} from "../lib/composer"
+import * as _ from "underscore"
 import * as shell from "shelljs"
 import {EventEmitter} from "events"
 import * as path from "path"
@@ -44,6 +45,13 @@ class File {
 		const input = fst(this.input)
 		const output = snd(this.input)
 		if( shell.test("-f", input) && shell.test("-d", output) ) throw new Error("Can not transpile a directory to a file - yet")  
+	}
+}
+class Io extends Array {
+	constructor([output, ...inputs]) {
+		super([output, ...inputs].length)
+		this.output = output
+		this.input = inputs
 	}
 }
 
@@ -89,16 +97,25 @@ function getTypeFromOption(parameters) {
 	// const CallType = getCallType(types, alternatives) // invoke the chain with the search criteria
 	// console.log(new CallType[0])
 	//return CallType
-	const searchFlags =  zip(types, alternatives)
-	const output = isEmpty(
-		searchFlags.map(
-			bind(getParameters, parameters)
-		)
+	const searchFlags = _.zip(types, alternatives);
+	// [[2],[2]] -> [ [2], ["ds", null] ]
+	const output = _.flatten(_.collect(searchFlags, flags =>
+		_.map(flags, flag =>
+			[flag, getParameters(flag, parameters)]
+		).filter(flags => isNotEmpty( snd(flags) ))
+	)).filter(isNotEmpty)
+	const getOutput = _.compose(
+		flags => _.map(flags, _.partial(getParameters, _, parameters))
 	)
-	let j = map( bind(getParameters, parameters) )(searchFlags)
+	
 	console.log("out",output)
-	console.log("j", j)
+	console.log("out2",getOutput(searchFlags))
+	console.log("paramenters", parameters)
 }
+
+/** flip :: (a -> b -> c) -> b -> a -> c */
+function flip(f) { return (b,a) => f(a,b) }
+
 function map(fn) {
 	return  (array) => Array.prototype.map.bind(array, fn)
 }
