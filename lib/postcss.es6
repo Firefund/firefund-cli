@@ -97,7 +97,7 @@ function getTypeFromOption(parameters) {
 	// const CallType = getCallType(types, alternatives) // invoke the chain with the search criteria
 	// console.log(new CallType[0])
 	//return CallType
-	const searchFlags = _.zip(types, alternatives);
+	const searchFlags = _.zip(types, alternatives)
 	// [[2],[2]] -> [ [2], ["ds", null] ]
 	const output = _.flatten(_.collect(searchFlags, flags =>
 		_.map(flags, flag =>

@@ -25,16 +25,21 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // function partial(f, ...args) {
 // 	return f.bind(null, ...args)
 // }
-var tuples = [['-d', '--dir']];
+var types = ["-r", "-d", "-o"];
+var alternatives = ["--replace", "--dir", "--output"];
+var tuples = _.zip(types, alternatives); //[ ['-d', '--dir'] ]
 var p1 = ['-d', 'one/path', 'two/path'];
 var p2 = ['one/path', '--dir', 'two/path'];
 var p3 = [];
 var p4 = ['one/path', '--dir', 'two/path', '-d', 'one/path'];
 
 var getParameters = function getParameters(map, lookup) {
-	var product = map.map(function (Sn, n) {
-		var i = lookup.indexOf(Sn);
-		return i > -1 && [lookup[i], lookup[i + 1]];
+	var product = map.map(function (flag, n) {
+		var i = lookup.indexOf(flag);
+		var Pn = i > -1 && [lookup[i], lookup[i + 1]];
+		// console.log("flag", flag)
+		console.log("Pn", lookup[n]);
+		return Pn;
 	});
 	return product;
 	//return isEmpty(product) && null || product
@@ -45,25 +50,56 @@ var getParameters = function getParameters(map, lookup) {
 // getParameter(tuples, p3),
 // getParameter(tuples, p4)
 // )
-console.log("%j \n", intersectTupleWith(getParameters, tuples, p1));
-console.log("%j \n", intersectTupleWith(getParameters, tuples, p2));
-console.log("%j \n", intersectTupleWith(getParameters, tuples, p3));
-console.log("%j \n", intersectTupleWith(getParameters, tuples, p4));
+/*console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p1)
+)*/
+/*console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p2)
+)
+console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p3)
+)
+console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p4)
+)*/
 
-function intersectTupleWith(f, tupleSet, set) {
-	return tupleSet.map(function (Sn) {
-		return intersectWith(f, Sn, set);
-	})[0];
+function tuplesIntersectionParametersPlusNextP(b, a) {
+	return b.map(function (Pn, n) {
+		var Ps = [];
+		a.forEach(function (S) {
+			S.forEach(function (Sn) {
+				if (Sn === Pn) Ps.push(Pn, b[n + 1]);
+				//console.log(Sn,Pn,Sn==Pn);
+			});
+		});
+		return Ps;
+	});
 }
-function intersectWith(f) {
+
+var Ps = tuplesIntersectionParametersPlusNextP(p1, tuples);
+console.log(_.flatten(Ps));
+Ps = tuplesIntersectionParametersPlusNextP(p2, tuples);
+console.log(_.flatten(Ps));
+Ps = tuplesIntersectionParametersPlusNextP(p3, tuples);
+console.log(_.flatten(Ps));
+Ps = tuplesIntersectionParametersPlusNextP(p4, tuples);
+console.log(_.flatten(Ps));
+
+function intersectionTupleWith(f, tupleSet, set) {
+	console.log("S", tupleSet);
+	return tupleSet.map(function (Sn) {
+		return intersectionWith(f, Sn, set);
+	});
+}
+function intersectionWith(f) {
 	for (var _len = arguments.length, sets = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
 		sets[_key - 1] = arguments[_key];
 	}
 
 	var lookup = longest.apply(undefined, sets);
 	var map = shortest.apply(undefined, sets);
-	console.log("longest", lookup);
-	console.log("shortest", map);
+	console.log("Sn", map);
+	console.log("P", lookup);
 	return f(map, lookup).filter(isNotEmpty);
 }
 
@@ -92,6 +128,9 @@ function isEmpty(array) {
 /** isNotEmpty :: [a] -> Bool */
 function isNotEmpty(a) {
 	return !isEmpty(a);
+}
+function identity(x) {
+	return x;
 }
 
 /**********************************************/

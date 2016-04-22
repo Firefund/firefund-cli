@@ -18,16 +18,22 @@ import * as _ from "underscore"
 // function partial(f, ...args) {
 // 	return f.bind(null, ...args)
 // }
-let tuples = [ ['-d', '--dir'] ]
+const types = ["-r","-d","-o"]
+const alternatives = ["--replace","--dir","--output"]
+const tuples =  _.zip(types, alternatives) //[ ['-d', '--dir'] ]
 let p1 = ['-d', 'one/path', 'two/path']
 let p2 = ['one/path', '--dir', 'two/path']
 let p3 = []
 let p4 = ['one/path', '--dir', 'two/path', '-d', 'one/path']
+let p5 = ['one/path', '--dir', 'two/path', '-d', 'one/path', '-d']
 
 const getParameters = (map, lookup) => {
-	const product = map.map( (Sn, n) =>  {
-		const i = lookup.indexOf(Sn)
-		return i > -1 && [lookup[i], lookup[i+1]]
+	const product = map.map( (flag, n) =>  {
+		const i = lookup.indexOf(flag)
+		const Pn = i > -1 && [lookup[i], lookup[i+1]] 
+		// console.log("flag", flag)
+		console.log("Pn", lookup[n])
+		return Pn
 	})
 	return product
 	//return isEmpty(product) && null || product
@@ -38,27 +44,59 @@ const getParameters = (map, lookup) => {
 	// getParameter(tuples, p3),
 	// getParameter(tuples, p4)
 // )
-console.log("%j \n",
-	intersectTupleWith(getParameters, tuples, p1)
+/*console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p1)
+)*/
+/*console.log("%j \n",
+	intersectionTupleWith(getParameters, tuples, p2)
 )
 console.log("%j \n",
-	intersectTupleWith(getParameters, tuples, p2)
+	intersectionTupleWith(getParameters, tuples, p3)
 )
 console.log("%j \n",
-	intersectTupleWith(getParameters, tuples, p3)
+	intersectionTupleWith(getParameters, tuples, p4)
+)*/
+
+function tuplesIntersectionParametersPlusNextP(b, a) {
+	return b.map(	(Pn, n) => {
+		let Ps = [];
+		a.forEach(S => {
+			S.forEach(Sn => {
+				if(Sn===Pn) Ps.push(Pn, b[n+1])
+				//console.log(Sn,Pn,Sn==Pn);
+			})
+		})
+		return Ps;
+	})
+}
+
+let Ps = tuplesIntersectionParametersPlusNextP(p1, tuples)
+console.log(
+	_.flatten(Ps)
 )
-console.log("%j \n",
-	intersectTupleWith(getParameters, tuples, p4)
+Ps = tuplesIntersectionParametersPlusNextP(p2, tuples)
+console.log(
+	_.flatten(Ps)
+)
+Ps = tuplesIntersectionParametersPlusNextP(p3, tuples)
+console.log(
+	_.flatten(Ps)
+)
+Ps = tuplesIntersectionParametersPlusNextP(p4, tuples)
+console.log(
+	_.flatten(Ps)
 )
 
-function intersectTupleWith(f, tupleSet, set) {
-	return tupleSet.map(Sn => intersectWith(f, Sn, set))[0]
+function intersectionTupleWith(f, tupleSet, set) {
+	console.log("S", tupleSet)
+	return tupleSet.map(Sn => intersectionWith(f, Sn, set))
+		
 }
-function intersectWith(f, ...sets) {
+function intersectionWith(f, ...sets) {
 	const lookup = longest(...sets)
 	const map = shortest(...sets)
-	console.log("longest", lookup)
-	console.log("shortest", map)
+	console.log("Sn", map)
+	console.log("P", lookup)
 	return f(map, lookup).filter(isNotEmpty)
 }
 
@@ -72,7 +110,7 @@ function shortest(...lists) {
 function isEmpty(array) { return array.length === 0 }
 /** isNotEmpty :: [a] -> Bool */
 function isNotEmpty(a) { return !isEmpty(a)}
-
+function identity(x) { return x }
 
 
 /**********************************************/
