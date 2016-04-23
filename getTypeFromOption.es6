@@ -18,9 +18,9 @@ import * as _ from "underscore"
 // function partial(f, ...args) {
 // 	return f.bind(null, ...args)
 // }
-const types = ["-r","-d","-o"]
-const alternatives = ["--replace","--dir","--output"]
-const tuples =  _.zip(types, alternatives) //[ ['-d', '--dir'] ]
+const flagsShort = ["-r","-d","-o"]
+const flagsLong = ["--replace","--dir","--output"]
+const tuples =  _.zip(flagsShort, flagsLong) //[ ['-d', '--dir'] ]
 let p1 = ['-d', 'one/path', 'two/path']
 let p2 = ['one/path', '--dir', 'two/path']
 let p3 = []
@@ -57,34 +57,34 @@ console.log("%j \n",
 	intersectionTupleWith(getParameters, tuples, p4)
 )*/
 
-function tuplesIntersectionParametersPlusNextP(b, a) {
-	return b.map(	(Pn, n) => {
-		let Ps = [];
-		a.forEach(S => {
-			S.forEach(Sn => {
-				if(Sn===Pn) Ps.push(Pn, b[n+1])
+function tuplesIntersectionParametersPlusNextP(P, S) {
+	const Ps = [];
+	P.forEach(	(Pn, n) => {
+		S.forEach(Sn => {
+			Sn.forEach(flag => {
+				if(flag===Pn) Ps.push(Pn, P[n+1])
 				//console.log(Sn,Pn,Sn==Pn);
 			})
 		})
-		return Ps;
 	})
+	return Ps;
 }
 
 let Ps = tuplesIntersectionParametersPlusNextP(p1, tuples)
 console.log(
-	_.flatten(Ps)
+	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p2, tuples)
 console.log(
-	_.flatten(Ps)
+	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p3, tuples)
 console.log(
-	_.flatten(Ps)
+	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p4, tuples)
 console.log(
-	_.flatten(Ps)
+	Ps
 )
 
 function intersectionTupleWith(f, tupleSet, set) {

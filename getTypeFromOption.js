@@ -25,13 +25,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // function partial(f, ...args) {
 // 	return f.bind(null, ...args)
 // }
-var types = ["-r", "-d", "-o"];
-var alternatives = ["--replace", "--dir", "--output"];
-var tuples = _.zip(types, alternatives); //[ ['-d', '--dir'] ]
+var flagsShort = ["-r", "-d", "-o"];
+var flagsLong = ["--replace", "--dir", "--output"];
+var tuples = _.zip(flagsShort, flagsLong); //[ ['-d', '--dir'] ]
 var p1 = ['-d', 'one/path', 'two/path'];
 var p2 = ['one/path', '--dir', 'two/path'];
 var p3 = [];
 var p4 = ['one/path', '--dir', 'two/path', '-d', 'one/path'];
+var p5 = ['one/path', '--dir', 'two/path', '-d', 'one/path', '-d'];
 
 var getParameters = function getParameters(map, lookup) {
 	var product = map.map(function (flag, n) {
@@ -63,27 +64,27 @@ console.log("%j \n",
 	intersectionTupleWith(getParameters, tuples, p4)
 )*/
 
-function tuplesIntersectionParametersPlusNextP(b, a) {
-	return b.map(function (Pn, n) {
-		var Ps = [];
-		a.forEach(function (S) {
-			S.forEach(function (Sn) {
-				if (Sn === Pn) Ps.push(Pn, b[n + 1]);
+function tuplesIntersectionParametersPlusNextP(P, S) {
+	var Ps = [];
+	P.forEach(function (Pn, n) {
+		S.forEach(function (Sn) {
+			Sn.forEach(function (flag) {
+				if (flag === Pn) Ps.push(Pn, P[n + 1]);
 				//console.log(Sn,Pn,Sn==Pn);
 			});
 		});
-		return Ps;
 	});
+	return Ps;
 }
 
 var Ps = tuplesIntersectionParametersPlusNextP(p1, tuples);
-console.log(_.flatten(Ps));
+console.log(Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p2, tuples);
-console.log(_.flatten(Ps));
+console.log(Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p3, tuples);
-console.log(_.flatten(Ps));
+console.log(Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p4, tuples);
-console.log(_.flatten(Ps));
+console.log(Ps);
 
 function intersectionTupleWith(f, tupleSet, set) {
 	console.log("S", tupleSet);
