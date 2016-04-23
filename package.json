@@ -14,7 +14,8 @@
     "transpile": "npm run --silent transpile:test & npm run --silent transpile:lib & npm run --silent transpile:bin",
     "transpile:test": "babel --out-dir . test/*.es6",
     "transpile:lib": "babel --out-dir . lib/*.es6",
-    "transpile:bin": "babel --out-dir . bin/*.es6"
+    "transpile:bin": "babel --out-dir . bin/*.es6",
+    "babel": "babel"
   },
   "repository": {
     "type": "git",

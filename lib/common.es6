@@ -7,7 +7,7 @@ const args = process.argv.length > 2 ?
 
 function errorOut(msg) {
   console.error(msg)
-  process.exit(1);
+  process.exit(1)
 }
 
 function fst(arr) { return arr.length > 0 ? arr[0] : null }
