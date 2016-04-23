@@ -58,7 +58,7 @@ tap.test("css::transpile postcss file to css", t => {
 
 })
 
-tap.test("css::transpile directory to new location while keeping directory structure", t => {
+/*tap.test("css::transpile directory to new location while keeping directory structure", t => {
 	let actual, expected
 	t.end()
-})
+})*/
