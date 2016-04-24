@@ -72,26 +72,26 @@ function tuplesIntersectionParametersPlusNextP(P, S) {
 
 
 function parse(cmd, flags, idx = 0, acc = []) {
-    if (idx + 1 >= cmd.length) return acc;
+	if (idx + 1 >= cmd.length) return acc;
 
-    if (elementInNestedLists(cmd[idx], flags)) {
-        acc.push(cmd[idx], cmd[idx + 1]);
-        return parse(cmd, flags, idx + 2, acc);
-    }
-    return parse(cmd, flags, idx + 1, acc);
+	if (elementInNestedLists(cmd[idx], flags)) {
+		acc.push(cmd[idx], cmd[idx + 1]);
+		return parse(cmd, flags, idx + 2, acc);
+	}
+	return parse(cmd, flags, idx + 1, acc);
 }
 
 function elementInNestedLists(e, l) {
-    if (l instanceof Array) {
-        for (let elem of l) {
-            if (elementInNestedLists(e, elem)) {
-                return true;
-            }
-        }
-        return false;
-    } else {
-        return l === e;
-    }
+	if (l instanceof Array) {
+		for (let elem of l) {
+			if (elementInNestedLists(e, elem)) {
+				return true;
+			}
+		}
+		return false;
+	} else {
+		return l === e;
+	}
 }
 
 /** isEmpty :: [a] -> Bool */
