@@ -70,20 +70,53 @@ function tuplesIntersectionParametersPlusNextP(P, S) {
 	return Ps;
 }
 
-let Ps = tuplesIntersectionParametersPlusNextP(p1, tuples)
+
+function parse(cmd, flags, idx = 0, acc = []) {
+    if (idx + 1 >= cmd.length) return acc;
+
+    if (elementInNestedLists(cmd[idx], flags)) {
+        acc.push(cmd[idx], cmd[idx + 1]);
+        return parse(cmd, flags, idx + 2, acc);
+    }
+    return parse(cmd, flags, idx + 1, acc);
+}
+
+function elementInNestedLists(e, l) {
+    if (l instanceof Array) {
+        for (let elem of l) {
+            if (elementInNestedLists(e, elem)) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return l === e;
+    }
+}
+
+/** isEmpty :: [a] -> Bool */
+function isEmpty(array) { return array.length === 0 }
+/** isNotEmpty :: [a] -> Bool */
+function isNotEmpty(a) { return !isEmpty(a)}
+
+let Ps = tuplesIntersectionParametersPlusNextP(p1, tuples) 
 console.log(
+	parse(p1, tuples),
 	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p2, tuples)
 console.log(
+	parse(p2, tuples),
 	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p3, tuples)
 console.log(
+	parse(p3, tuples),
 	Ps
 )
 Ps = tuplesIntersectionParametersPlusNextP(p4, tuples)
 console.log(
+	parse(p4, tuples),
 	Ps
 )
 
@@ -106,10 +139,7 @@ function longest(...lists) {
 function shortest(...lists) {
 	return _.min( [...lists], list => list.length )
 }
-/** isEmpty :: [a] -> Bool */
-function isEmpty(array) { return array.length === 0 }
-/** isNotEmpty :: [a] -> Bool */
-function isNotEmpty(a) { return !isEmpty(a)}
+
 function identity(x) { return x }
 
 

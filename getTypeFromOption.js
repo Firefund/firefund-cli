@@ -77,14 +77,71 @@ function tuplesIntersectionParametersPlusNextP(P, S) {
 	return Ps;
 }
 
+function parse(cmd, flags) {
+	var idx = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+	var acc = arguments.length <= 3 || arguments[3] === undefined ? [] : arguments[3];
+
+	if (idx + 1 >= cmd.length) return acc;
+
+	if (elementInNestedLists(cmd[idx], flags)) {
+		acc.push(cmd[idx], cmd[idx + 1]);
+		return parse(cmd, flags, idx + 2, acc);
+	}
+	return parse(cmd, flags, idx + 1, acc);
+}
+
+function elementInNestedLists(e, l) {
+	if (l instanceof Array) {
+		var _iteratorNormalCompletion = true;
+		var _didIteratorError = false;
+		var _iteratorError = undefined;
+
+		try {
+			for (var _iterator = l[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var elem = _step.value;
+
+				if (elementInNestedLists(e, elem)) {
+					return true;
+				}
+			}
+		} catch (err) {
+			_didIteratorError = true;
+			_iteratorError = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion && _iterator.return) {
+					_iterator.return();
+				}
+			} finally {
+				if (_didIteratorError) {
+					throw _iteratorError;
+				}
+			}
+		}
+
+		return false;
+	} else {
+		return l === e;
+	}
+}
+
+/** isEmpty :: [a] -> Bool */
+function isEmpty(array) {
+	return array.length === 0;
+}
+/** isNotEmpty :: [a] -> Bool */
+function isNotEmpty(a) {
+	return !isEmpty(a);
+}
+
 var Ps = tuplesIntersectionParametersPlusNextP(p1, tuples);
-console.log(Ps);
+console.log(parse(p1, tuples), Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p2, tuples);
-console.log(Ps);
+console.log(parse(p2, tuples), Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p3, tuples);
-console.log(Ps);
+console.log(parse(p3, tuples), Ps);
 Ps = tuplesIntersectionParametersPlusNextP(p4, tuples);
-console.log(Ps);
+console.log(parse(p4, tuples), Ps);
 
 function intersectionTupleWith(f, tupleSet, set) {
 	console.log("S", tupleSet);
@@ -122,14 +179,7 @@ function shortest() {
 		return list.length;
 	});
 }
-/** isEmpty :: [a] -> Bool */
-function isEmpty(array) {
-	return array.length === 0;
-}
-/** isNotEmpty :: [a] -> Bool */
-function isNotEmpty(a) {
-	return !isEmpty(a);
-}
+
 function identity(x) {
 	return x;
 }
