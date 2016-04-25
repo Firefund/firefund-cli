@@ -2,27 +2,37 @@
 
 "use strict";
 
-var c = require("../lib/common.js")
-var dest = c.fst(c.args) // null or first argument to assets
-var path = require("path");
-var shell = require("shelljs")
-var copy = require("bower-copy").copyComponents
-var copyPath
+import * as c from "../lib/common"
+import * as path from "path"
+import * as shell from "shelljs"
+import {copyComponents as copy} from "bower-copy"
+
+const dest = c.fst(c.args) // null or first argument to assets
+
+let copyPath
+
+if( c.isNotEmpty(c.getParameters("-h", c.args)) ) {
+  showHelp()
+  process.exit()
+} else if(!dest) {
+  showHelp()
+  c.errorOut("Destination path for asssets is required!")
+}
 
 //shell.exec("echo " + args.toString())
-if(!dest) {
-  c.error("Destination path for asssets is required!")
-}
-copyPath = path.resolve(process.cwd(), dest);
+
+copyPath = path.resolve(process.cwd(), dest)
 
 // install bower components defined in calling bower.json
-if(shell.which("bower")) {
-  shell.exec("bower install")
-} else {
-  c.error("You need to install bower to download the asssets.\r\nnpm install -g bower")
-}
+if(shell.which("bower")) shell.exec("bower install")
+else c.errorOut("You need to install bower to download the asssets.\r\nnpm install -g bower")
 
 // copy assets from bower_components to supplied copyPath
-copy({ dest: copyPath }, function(err, copied) {
-  if(err) c.error(err)
+copy({ dest: copyPath }, (err, copied) => {
+  if(err) c.errorOut(err)
 })
+
+function showHelp() {
+  console.log("usage:\tassets path\t\tcopy bower components to the path specified")
+  console.log("\tassets -h\t\tprint this help")
+}
