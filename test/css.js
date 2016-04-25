@@ -74,8 +74,7 @@ tap.test("css::transpile postcss file to css", function (t) {
 	});
 });
 
-tap.test("css::transpile directory to new location while keeping directory structure", function (t) {
-	var actual = void 0,
-	    expected = void 0;
-	t.end();
-});
+/*tap.test("css::transpile directory to new location while keeping directory structure", t => {
+	let actual, expected
+	t.end()
+})*/
