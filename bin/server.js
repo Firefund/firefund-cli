@@ -49,7 +49,7 @@ if (!rootPath) c.errorOut("Root path for ecstatic is required as first argument"
 if (!watchPath) c.errorOut("Watch path for livereload is required as second argument");
 
 var listeners = (0, _composer2.default)(logPath, setupEcstatic());
-http.createServer(listeners).listen(8080);
+http.createServer(listeners).listen(8080); //TODO: don't hard-code port number
 
 server.watch(path.resolve(dirroot, watchPath));
 

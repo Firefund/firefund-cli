@@ -25,7 +25,7 @@ if(!watchPath)
   c.errorOut("Watch path for livereload is required as second argument")
 
 const listeners = composeListeners(logPath, setupEcstatic())
-http.createServer(listeners).listen(8080);
+http.createServer(listeners).listen(8080); //TODO: don't hard-code port number
 
 server.watch(path.resolve(dirroot, watchPath))
 
