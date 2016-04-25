@@ -33,7 +33,7 @@
     "autoprefixer": "6.x",
     "babel-cli": "6.x",
     "babel-preset-es2015": "6.x",
-    "bower-copy": "0.x",
+    "bower-copy": "git+https://github.com/Firefund/bower-copy.git",
     "ecstatic": "1.x",
     "livereload": "0.x",
     "lost": "6.x",
