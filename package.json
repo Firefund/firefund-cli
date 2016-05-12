@@ -1,6 +1,6 @@
 {
   "name": "@dotnetcarpenter/firefund-cli",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "description": "Command Line Interface (CLI) for Firefund development scripts",
   "bin": {
     "assets": "bin/assets.js",
