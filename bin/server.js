@@ -38,18 +38,28 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // ecstatic exports in a very unusual way
 
 
-var rootPath = c.fst(c.args),
-    watchPath = c.snd(c.args) // null or second argument to server
-,
-    dirroot = path.normalize(process.cwd()),
-    server = livereload.createServer({ exts: ["htm", "html", "css", "js", "png", "gif", "jpg", "svg"] });
+var getPort = function getPort(args) {
+  var p = c.getParameters("-p", args);
+  var port = c.getParameters("--port", args);
+  return c.isNotEmpty(p) && c.fst(p) || c.isNotEmpty(port) && c.fst(port) || null;
+};
+
+var port = getPort(c.args) | 0;
+// console.error("PORT", c.args, c.args.indexOf(port))
+if (port) c.args.splice(c.args.indexOf(port) - 1, 2);else port = 8080;
+// console.error("PORT", c.args)
+
+var rootPath = c.fst(c.args);
+var watchPath = c.snd(c.args); // null or second argument to server
+var dirroot = path.normalize(process.cwd());
+var server = livereload.createServer({ port: port + 1, exts: ["htm", "html", "css", "js", "png", "gif", "jpg", "svg"] });
 
 if (!rootPath) c.errorOut("Root path for ecstatic is required as first argument");
 
 if (!watchPath) c.errorOut("Watch path for livereload is required as second argument");
 
-var listeners = (0, _composer2.default)(logPath, setupEcstatic());
-http.createServer(listeners).listen(8080); //TODO: don't hard-code port number
+var middleware = (0, _composer2.default)(logPath, setupEcstatic());
+http.createServer(middleware).listen(port);
 
 server.watch(path.resolve(dirroot, watchPath));
 
@@ -64,4 +74,4 @@ function setupEcstatic() {
   });
 }
 
-console.log("Running server on port http://localhost:8080 with root in " + rootPath + " and listening for changes in " + watchPath);
+console.log("Running ecstatic on http://localhost:" + port + " and livereload on http://localhost:" + (port + 1) + " with root in " + rootPath + " and listening for changes in " + watchPath);

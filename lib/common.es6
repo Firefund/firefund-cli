@@ -67,16 +67,19 @@ function createChild({
 
   // auto remove file descriptor if they are closed
   fileDescriptors.forEach(autoRemoveFileDescriptor)
+  // remove file descriptors if user ctrl+c
+  process.on('SIGINT', () => { fileDescriptors.forEach(closeFileDescriptor) })
 
   child.on("close", (code, signal) => {
     fileDescriptors.forEach(closeFileDescriptor)
   })
   
-  //  for each true item in pipes,
+  // for each true item in pipes,
   // auto pipe file descriptors to their corresponding process file descriptor
   fileDescriptors.forEach(pipeToProcess)
 
   return child
+
 
   function autoRemoveFileDescriptor(fd, n, all) {
     if(fd === null) return

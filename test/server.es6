@@ -70,7 +70,7 @@ tap.test("server.es6::Ecstatic startup message", function(t) {
           args: ["test/fixtures", "test/fixtures"],
           stdio: ["ignore", "pipe", "ignore"]
         }),
-        expectedOutput = "Running server on port http://localhost:8080 with root in test/fixtures and listening for changes in test/fixtures\n",
+        expectedOutput = "Running ecstatic on http://localhost:8080 and livereload on http://localhost:8081 with root in test/fixtures and listening for changes in test/fixtures\n",
         childKiller = kill.bind(null, child)
         
   let timerId,
@@ -88,4 +88,51 @@ tap.test("server.es6::Ecstatic startup message", function(t) {
     output += chunk
     timerId = timer(childKiller)
   })
+})
+
+tap.test("server.es6::Run multiple instances of ecstatic", function(t) {
+  t.plan(2)
+  
+  let port = ["-p", 8888]
+  const file = require.resolve("../bin/server")
+  const args = ["test/fixtures", "test/fixtures"]
+  const stdio = ["ignore", "pipe", "pipe"]
+  
+  let child = createChild({ file, args: args.concat(port), stdio })
+  const childKiller1 = kill.bind(null, child)
+  child.stderr.on("data", data => {
+    childKiller1()
+    t.fail(`server.es6 threw an error: ${data}`)
+  })
+  child.stdout.on("data", data => {
+    t.ok(true, data)
+    childKiller1()
+  })
+  
+  port =  ["--port", 8989]
+  child = createChild({ file, args: args.concat(port), stdio })
+  const childKiller2 = kill.bind(null, child)
+  child.stderr.on("data", data => {
+    childKiller2()
+    t.fail(`server.es6 threw an error: ${data}`)
+  })
+  child.stdout.on("data", data => {
+    t.ok(true, data)
+    childKiller2()
+  })
+
+  // let timerId
+
+  // t.plan(2)
+
+  // child.on('exit', code => {
+  //   t.ok((code|0) === 0, "should exit with error code 0")
+  //   t.equal( eol.lf( output ), expectedOutput )
+  // })
+  // child.stdout.on("data", (chunk) => {
+  //   if(timerId)
+  //     clearTimeout(timerId)
+  //   output += chunk
+  //   timerId = timer(childKiller)
+  // })
 })
