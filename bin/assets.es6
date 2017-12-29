@@ -28,8 +28,9 @@ if(shell.which("bower")) shell.exec("bower install")
 else c.errorOut("You need to install bower to download the asssets.\r\nnpm install -g bower")
 
 // copy assets from bower_components to supplied copyPath
-copy({ dest: copyPath }, (err, copied) => {
+copy({ dest: copyPath, newer: true }, (err, copied) => {
   if(err) c.errorOut(err)
+  console.log(copied)
 })
 
 function showHelp() {
